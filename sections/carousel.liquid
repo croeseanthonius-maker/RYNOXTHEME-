@@ -1,4 +1,4 @@
-<section class="embla">
+<section class="embla" id="embla-{{ section.id }}">
   {% if section.settings.show_title %}
     <div class="embla__title">
       <h2>{{ section.settings.carousel_title }}</h2>
@@ -17,12 +17,9 @@
         assign only_on_sale = section.settings.only_on_sale
       -%}
 
-      {%- comment -%} LOGIQUE 1 : SI DES COLLECTIONS SONT SÉLECTIONNÉES {%- endcomment -%}
       {%- if section.settings.collection_list != blank -%}
-        
         {%- for collection in section.settings.collection_list -%}
           {%- for product in collection.products -%}
-            
             {%- if rendered_count >= max_products -%}{%- break -%}{%- endif -%}
 
             {%- assign is_on_sale = false -%}
@@ -38,14 +35,11 @@
               {% render 'product-card', product: product %}
             </div>
             {%- assign rendered_count = rendered_count | plus: 1 -%}
-            
           {%- endfor -%}
           {%- if rendered_count >= max_products -%}{%- break -%}{%- endif -%}
         {%- endfor -%}
 
-      {%- comment -%} LOGIQUE 2 : SI AUCUNE COLLECTION, ON UTILISE LES BLOCS MANUELS {%- endcomment -%}
       {%- elsif section.blocks.size > 0 -%}
-        
         {%- for block in section.blocks -%}
           {%- if block.settings.product != blank -%}
             {%- assign product = block.settings.product -%}
@@ -65,10 +59,8 @@
             {%- assign rendered_count = rendered_count | plus: 1 -%}
           {%- endif -%}
         {%- endfor -%}
-        
       {%- endif -%}
 
-      {%- comment -%} SI AUCUN PRODUIT NE CORRESPOND (OU VIDE) {%- endcomment -%}
       {%- if rendered_count == 0 -%}
         <div class="embla__slide">
           <div style="text-align: center; padding: 50px; background: rgba(255,255,255,0.4); backdrop-filter: blur(10px); border-radius: 1.5rem; border: 1px solid rgba(255,255,255,0.6);">
@@ -93,38 +85,82 @@
     </button>
   </div>
 
+  {% if section.settings.button_label != blank %}
+    <div class="embla__view-all">
+      <button type="button" class="btn embla__view-all-btn">
+        {{ section.settings.button_label }}
+      </button>
+    </div>
+  {% endif %}
+
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      const viewport = document.querySelector('.embla__viewport');
-      const prevBtn = document.querySelector('.embla__button--prev');
-      const nextBtn = document.querySelector('.embla__button--next');
+      const section = document.getElementById('embla-{{ section.id }}');
+      if (!section) return;
 
-      if (!viewport || !prevBtn || !nextBtn) return;
+      const viewport = section.querySelector('.embla__viewport');
+      const prevBtn = section.querySelector('.embla__button--prev');
+      const nextBtn = section.querySelector('.embla__button--next');
+      const viewAllBtn = section.querySelector('.embla__view-all-btn');
 
-      // Met à jour l'état des boutons selon la position du scroll
       function updateButtons() {
-        // scrollLeft indique où on est. On utilise Math.ceil pour éviter les bugs de pixels décimaux
+        if (!prevBtn || !nextBtn) return;
         prevBtn.disabled = viewport.scrollLeft <= 0;
         nextBtn.disabled = Math.ceil(viewport.scrollLeft + viewport.clientWidth) >= viewport.scrollWidth;
       }
 
-      // Quand on clique sur PRÉCÉDENT
-      prevBtn.addEventListener('click', function() {
-        const scrollAmount = viewport.clientWidth * 0.8; // On scrolle de 80% de l'écran
-        viewport.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
-      });
+      function getNextTarget() {
+        const viewportRect = viewport.getBoundingClientRect();
+        const slides = viewport.querySelectorAll('.embla__slide');
+        for (let slide of slides) {
+          const rect = slide.getBoundingClientRect();
+          if (rect.left > viewportRect.left + 10) {
+            return viewport.scrollLeft + (rect.left - viewportRect.left);
+          }
+        }
+        return viewport.scrollLeft + viewport.clientWidth;
+      }
 
-      // Quand on clique sur SUIVANT
-      nextBtn.addEventListener('click', function() {
-        const scrollAmount = viewport.clientWidth * 0.8;
-        viewport.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-      });
+      function getPrevTarget() {
+        const viewportRect = viewport.getBoundingClientRect();
+        const slides = Array.from(viewport.querySelectorAll('.embla__slide')).reverse();
+        for (let slide of slides) {
+          const rect = slide.getBoundingClientRect();
+          if (rect.left < viewportRect.left - 10) {
+            return viewport.scrollLeft + (rect.left - viewportRect.left);
+          }
+        }
+        return viewport.scrollLeft - viewport.clientWidth;
+      }
 
-      // On écoute le défilement (doigt ou bouton) pour griser les flèches si on est aux extrémités
+      if (prevBtn) {
+        prevBtn.addEventListener('click', function() {
+          viewport.scrollTo({ left: getPrevTarget(), behavior: 'smooth' });
+        });
+      }
+
+      if (nextBtn) {
+        nextBtn.addEventListener('click', function() {
+          viewport.scrollTo({ left: getNextTarget(), behavior: 'smooth' });
+        });
+      }
+
+      if (viewAllBtn) {
+        viewAllBtn.addEventListener('click', function() {
+          section.classList.toggle('is-expanded');
+          
+          if (section.classList.contains('is-expanded')) {
+            viewAllBtn.textContent = "{{ section.settings.button_label_less | default: 'Show less' }}";
+          } else {
+            viewAllBtn.textContent = "{{ section.settings.button_label }}";
+            viewport.scrollTo({ left: 0, behavior: 'smooth' });
+          }
+        });
+      }
+
       viewport.addEventListener('scroll', updateButtons, { passive: true });
       window.addEventListener('resize', updateButtons);
       
-      // Initialisation
       updateButtons();
     });
   </script>
@@ -134,35 +170,58 @@
   .embla {
     width: 100vw;
     margin-left: calc(-50vw + 50%);
-    padding: 40px 0; /* Padding horizontal retiré pour que les cartes débordent de l'écran joliment */
-    --slide-size: 85%; /* Sur mobile, la carte prend 85% de l'écran, ce qui laisse entrevoir la suivante */
+    padding: 40px 0;
+    --slide-size: 85%;
+    transition: all 0.3s ease;
   }
 
   .embla__viewport {
     overflow-x: auto;
     overflow-y: hidden;
-    scroll-snap-type: x mandatory; /* Le secret d'un scroll parfait */
+    scroll-snap-type: x mandatory;
     scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
-    scrollbar-width: none; /* Cache la barre sur Firefox */
-    -ms-overflow-style: none; /* Cache la barre sur IE/Edge */
-    padding: 0 20px; /* On remet le padding ici à l'intérieur du conteneur de défilement */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding: 0 20px;
   }
 
   .embla__viewport::-webkit-scrollbar {
-    display: none; /* Cache la barre sur Chrome/Safari */
+    display: none;
   }
 
   .embla__container {
     display: flex;
     gap: 20px;
-    padding-bottom: 20px; /* Pour l'ombre des cartes */
+    padding-bottom: 20px;
   }
 
   .embla__slide {
     flex: 0 0 var(--slide-size);
     min-width: 0;
-    scroll-snap-align: center; /* Aimante la carte au centre de l'écran sur mobile */
+    scroll-snap-align: center;
+  }
+
+  .embla.is-expanded .embla__viewport {
+    overflow: visible;
+    scroll-snap-type: none;
+  }
+
+  .embla.is-expanded .embla__container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    padding-bottom: 0;
+  }
+
+  .embla.is-expanded .embla__slide {
+    flex: unset;
+    width: 100%;
+    scroll-snap-align: none;
+  }
+
+  .embla.is-expanded .embla__controls {
+    display: none;
   }
 
   .embla__title {
@@ -226,6 +285,19 @@
     color: #999;
   }
 
+  .embla__view-all {
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+    padding: 0 20px;
+  }
+
+  .embla__view-all .btn {
+    padding: 12px 30px;
+    font-size: 14px;
+    border-radius: 50px;
+  }
+
   @media (max-width: 768px) {
     .embla { padding: 30px 0; }
     .embla__title h2 { font-size: 24px; }
@@ -234,14 +306,15 @@
     .embla__button { width: 40px; height: 40px; }
   }
 
-  /* Breakpoints pour adapter le nombre de cartes affichées à l'écran */
   @media (min-width: 768px) {
     .embla { --slide-size: calc(50% - 10px); }
-    .embla__slide { scroll-snap-align: start; } /* Sur grand écran, on aligne à gauche */
+    .embla__slide { scroll-snap-align: start; }
+    .embla.is-expanded .embla__container { grid-template-columns: repeat(3, 1fr); gap: 20px; }
   }
 
   @media (min-width: 1024px) {
     .embla { --slide-size: calc(33.333% - 13.33px); }
+    .embla.is-expanded .embla__container { grid-template-columns: repeat(4, 1fr); }
   }
 
   @media (min-width: 1280px) {
@@ -277,8 +350,7 @@
     },
     {
       "type": "header",
-      "content": "Data source",
-      "info": "Select collections to populate the carousel automatically. If left empty, manual blocks will be used."
+      "content": "Data source"
     },
     {
       "type": "collection_list",
@@ -299,6 +371,22 @@
       "step": 1,
       "label": "Maximum products to show",
       "default": 8
+    },
+    {
+      "type": "header",
+      "content": "View All Button"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label (Expand)",
+      "default": "View all products"
+    },
+    {
+      "type": "text",
+      "id": "button_label_less",
+      "label": "Button label (Collapse)",
+      "default": "Show less"
     }
   ],
   "blocks": [
