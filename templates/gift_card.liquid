@@ -11,8 +11,7 @@
 
     <style>
       body {
-        margin: 0;
-        padding: 0;
+        margin: 0; padding: 0;
         font-family: {{ settings.type_body_font.family }}, sans-serif;
         min-height: 100vh;
         display: flex;
@@ -23,8 +22,7 @@
       }
 
       .gift-card-container {
-        width: 100%;
-        max-width: 500px;
+        width: 100%; max-width: 500px;
         padding: 20px;
         box-sizing: border-box;
       }
@@ -71,21 +69,18 @@
       }
 
       .gc-illustration {
-        width: 80px;
-        margin-bottom: 20px;
+        width: 80px; margin-bottom: 20px;
       }
 
       .gc-value {
-        font-size: 48px;
-        font-weight: 800;
+        font-size: 48px; font-weight: 800;
         margin-bottom: 5px;
         color: #111;
         letter-spacing: -1px;
       }
 
       .gc-balance {
-        font-size: 14px;
-        color: #555;
+        font-size: 14px; color: #555;
         margin-bottom: 30px;
         font-weight: 600;
       }
@@ -119,21 +114,24 @@
       }
 
       .gc-qr {
-        background: #fff;
-        padding: 15px;
+        background: #fff; padding: 15px;
         border-radius: 16px;
         box-shadow: 0 10px 20px rgba(0,0,0,0.05);
       }
+      
+      .apple-wallet-wrapper {
+        margin-bottom: 30px;
+        display: flex;
+        justify-content: center;
+      }
 
       .gc-actions {
-        display: flex;
-        flex-direction: column;
+        display: flex; flex-direction: column;
         gap: 15px;
       }
 
       .btn {
-        display: block;
-        width: 100%;
+        display: block; width: 100%;
         padding: 16px;
         border-radius: 50px;
         font-size: 16px;
@@ -147,19 +145,16 @@
       }
 
       .btn-primary {
-        background: #111;
-        color: #fff;
+        background: #111; color: #fff;
         box-shadow: 0 10px 20px rgba(0,0,0,0.1);
       }
 
       .btn-primary:hover {
-        background: #333;
-        transform: translateY(-2px);
+        background: #333; transform: translateY(-2px);
       }
 
       .btn-secondary {
-        background: rgba(255,255,255,0.5);
-        color: #111;
+        background: rgba(255,255,255,0.5); color: #111;
         border: 1px solid rgba(0,0,0,0.1);
       }
 
@@ -171,7 +166,7 @@
         @page { margin: 0; }
         body { background: white; }
         .glass-card { box-shadow: none; border: 1px solid #ccc; }
-        .btn, .glass-card::before { display: none; }
+        .btn, .apple-wallet-wrapper, .glass-card::before { display: none; }
       }
     </style>
   </head>
@@ -206,6 +201,14 @@
         <div class="gc-qr-wrapper">
           <div id="QrCode" class="gc-qr" data-identifier="{{ gift_card.qr_identifier }}"></div>
         </div>
+
+        {%- if gift_card.pass_url -%}
+          <div class="apple-wallet-wrapper">
+            <a href="{{ gift_card.pass_url }}" class="apple-wallet-btn">
+              <img src="{{ 'gift-card/add-to-apple-wallet.svg' | shopify_asset_url }}" width="120" height="40" alt="Add To Apple Wallet" style="border-radius: 4px;">
+            </a>
+          </div>
+        {%- endif -%}
 
         <div class="gc-actions">
           <a href="{{ routes.root_url }}" class="btn btn-primary" target="_blank">Start Shopping</a>

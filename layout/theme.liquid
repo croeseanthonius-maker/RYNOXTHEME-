@@ -16,6 +16,22 @@
       {{ settings.type_heading_font | font_face: font_display: 'swap' }}
       {{ settings.type_body_font | font_face: font_display: 'swap' }}
 
+      {%- assign heading_font_bold = settings.type_heading_font | font_modify: 'weight', 'bold' -%}
+      {%- assign heading_font_italic = settings.type_heading_font | font_modify: 'style', 'italic' -%}
+      {%- assign heading_font_bold_italic = heading_font_bold | font_modify: 'style', 'italic' -%}
+      
+      {%- assign body_font_bold = settings.type_body_font | font_modify: 'weight', 'bold' -%}
+      {%- assign body_font_italic = settings.type_body_font | font_modify: 'style', 'italic' -%}
+      {%- assign body_font_bold_italic = body_font_bold | font_modify: 'style', 'italic' -%}
+
+      {{ heading_font_bold | font_face: font_display: 'swap' }}
+      {{ heading_font_italic | font_face: font_display: 'swap' }}
+      {{ heading_font_bold_italic | font_face: font_display: 'swap' }}
+
+      {{ body_font_bold | font_face: font_display: 'swap' }}
+      {{ body_font_italic | font_face: font_display: 'swap' }}
+      {{ body_font_bold_italic | font_face: font_display: 'swap' }}
+
       :root {
         --font-heading-family: {{ settings.type_heading_font.family }}, {{ settings.type_heading_font.fallback_families }};
         --font-heading-weight: {{ settings.type_heading_font.weight }};

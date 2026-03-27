@@ -2,10 +2,10 @@
   {
     "name": "theme_info",
     "theme_name": "Rynox",
-    "theme_version": "0.1.0",
-    "theme_author": "Shopify",
-    "theme_documentation_url": "https://help.shopify.com/manual/online-store/themes",
-    "theme_support_url": "https://support.shopify.com/"
+    "theme_version": "1.0.0",
+    "theme_author": "Adele Anne Claudy Zoaeter",
+    "theme_documentation_url": "https://onedrive.live.com/:w:/g/personal/7DFB28B94B9EB606/IQCGNwzOgSkWRK9MjuH3JZZjARuAkdIWSvx9B0-MPO3TDB0?rtime=Zfqu0BmM3kg&redeem=aHR0cHM6Ly8xZHJ2Lm1zL3cvYy83REZCMjhCOTRCOUVCNjA2L0lRQ0dOd3pPZ1NrV1JLOU1qdUgzSlpaakFSdUFrZElXU3Z4OUIwLU1QTzNUREIwP2U9VkpiR2Rp",
+    "theme_support_url": "https://onedrive.live.com/:w:/g/personal/7DFB28B94B9EB606/IQCGNwzOgSkWRK9MjuH3JZZjARuAkdIWSvx9B0-MPO3TDB0?rtime=Zfqu0BmM3kg&redeem=aHR0cHM6Ly8xZHJ2Lm1zL3cvYy83REZCMjhCOTRCOUVCNjA2L0lRQ0dOd3pPZ1NrV1JLOU1qdUgzSlpaakFSdUFrZElXU3Z4OUIwLU1QTzNUREIwP2U9VkpiR2Rp"
   },
   {
     "name": "Brand",
@@ -36,6 +36,47 @@
         "id": "type_body_font",
         "default": "work_sans_n4",
         "label": "Body font"
+      }
+    ]
+  },
+  {
+    "name": "Social media",
+    "settings": [
+      {
+        "type": "text",
+        "id": "social_facebook_link",
+        "label": "Facebook",
+        "info": "https://facebook.com/shopify"
+      },
+      {
+        "type": "text",
+        "id": "social_instagram_link",
+        "label": "Instagram",
+        "info": "https://instagram.com/shopify"
+      },
+      {
+        "type": "text",
+        "id": "social_twitter_link",
+        "label": "X (Twitter)",
+        "info": "https://x.com/shopify"
+      },
+      {
+        "type": "text",
+        "id": "social_tiktok_link",
+        "label": "TikTok",
+        "info": "https://tiktok.com/@shopify"
+      },
+      {
+        "type": "text",
+        "id": "social_youtube_link",
+        "label": "YouTube",
+        "info": "https://youtube.com/shopify"
+      },
+      {
+        "type": "text",
+        "id": "social_pinterest_link",
+        "label": "Pinterest",
+        "info": "https://pinterest.com/shopify"
       }
     ]
   },
@@ -152,7 +193,7 @@
       {
         "type": "color",
         "id": "home_fg_color",
-        "label": "Text (Foreground) color",
+        "label": "Text (foreground) color",
         "default": "#111111"
       },
       {
@@ -174,7 +215,7 @@
       {
         "type": "color",
         "id": "global_product_fg_color",
-        "label": "Text (Foreground) color",
+        "label": "Text (foreground) color",
         "default": "#111111"
       },
       {
@@ -196,7 +237,7 @@
       {
         "type": "color",
         "id": "global_cart_fg_color",
-        "label": "Text (Foreground) color",
+        "label": "Text (foreground) color",
         "default": "#111111"
       },
       {
@@ -218,7 +259,7 @@
       {
         "type": "color",
         "id": "global_collection_fg_color",
-        "label": "Text (Foreground) color",
+        "label": "Text (foreground) color",
         "default": "#111111"
       },
       {
@@ -240,7 +281,7 @@
       {
         "type": "color",
         "id": "global_list_collections_fg_color",
-        "label": "Text (Foreground) color",
+        "label": "Text (foreground) color",
         "default": "#111111"
       },
       {
@@ -262,7 +303,7 @@
       {
         "type": "color",
         "id": "global_search_fg_color",
-        "label": "Text (Foreground) color",
+        "label": "Text (foreground) color",
         "default": "#111111"
       },
       {
