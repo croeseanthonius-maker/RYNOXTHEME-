@@ -104,19 +104,36 @@
                       <input type="checkbox" name="properties[__shopify_send_gift_card_to_recipient]" id="Recipient-checkbox">
                       Send as a gift
                     </label>
-                    <div class="recipient-fields" style="display: none; margin-top: 15px; display:flex; flex-direction:column; gap:10px;">
-                      <input type="email" class="glass-select" name="properties[Recipient email]" placeholder="Recipient email" id="Recipient-email">
-                      <input type="text" class="glass-select" name="properties[Recipient name]" placeholder="Recipient name">
-                      <textarea class="glass-select" name="properties[Message]" placeholder="Message"></textarea>
-                      <input type="date" class="glass-select" name="properties[Send on]" placeholder="Send on date">
+                    <div class="recipient-fields" style="display: none; margin-top: 15px; flex-direction:column; gap:10px;">
+                      <div class="recipient-field">
+                        <label for="Recipient-email">Recipient email</label>
+                        <input type="email" class="glass-select" name="properties[Recipient email]" placeholder="Recipient email" id="Recipient-email">
+                      </div>
+                      <div class="recipient-field">
+                        <label for="Recipient-name">Recipient name</label>
+                        <input type="text" class="glass-select" name="properties[Recipient name]" placeholder="Recipient name" id="Recipient-name">
+                      </div>
+                      <div class="recipient-field">
+                        <label for="Recipient-message">Message</label>
+                        <textarea class="glass-select" name="properties[Message]" placeholder="Message" id="Recipient-message"></textarea>
+                      </div>
+                      <div class="recipient-field">
+                        <label for="Recipient-date">Send on date</label>
+                        <input type="date" class="glass-select" name="properties[Send on]" placeholder="Send on date" id="Recipient-date">
+                      </div>
                     </div>
                   </div>
                   <script>
                     document.getElementById('Recipient-checkbox').addEventListener('change', function() {
                       const fields = document.querySelector('.recipient-fields');
                       const email = document.getElementById('Recipient-email');
-                      if(this.checked) { fields.style.display = 'flex'; email.setAttribute('required', 'required'); } 
-                      else { fields.style.display = 'none'; email.removeAttribute('required'); }
+                      if(this.checked) { 
+                        fields.style.display = 'flex'; 
+                        email.setAttribute('required', 'required'); 
+                      } else { 
+                        fields.style.display = 'none'; 
+                        email.removeAttribute('required'); 
+                      }
                     });
                   </script>
                 {%- endif -%}
@@ -250,8 +267,11 @@ document.addEventListener('DOMContentLoaded', function() {
   .product-description::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.2); border-radius: 8px; }
   .product-description::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.3); border-radius: 8px; }
   .product-description::-webkit-scrollbar-thumb:hover { background: rgba(0, 0, 0, 0.5); }
+  
   .selector-wrapper, .color-selector-wrapper { margin-bottom: 20px; }
-  .selector-wrapper label, .color-selector-wrapper > label, .quantity-wrapper label { display: block; font-weight: 600; margin-bottom: 8px; font-size: 0.9rem; text-transform: uppercase; }
+  .selector-wrapper label, .color-selector-wrapper > label, .quantity-wrapper label, .recipient-field label { display: block; font-weight: 600; margin-bottom: 8px; font-size: 0.9rem; text-transform: uppercase; }
+  .recipient-field { width: 100%; }
+  
   .glass-select { width: 100%; padding: 12px; background: rgba(255,255,255,0.6); border: 1px solid rgba(0,0,0,0.1); border-radius: 8px; font-size: 1rem; outline: none; }
   .color-selector { display: flex; gap: 12px; flex-wrap: wrap; }
   .hidden { display: none; }
@@ -289,7 +309,7 @@ document.addEventListener('DOMContentLoaded', function() {
     { "type": "pickup_availability", "name": "Pickup availability", "limit": 1 },
     { 
       "type": "buy_buttons", 
-      "name": "Buy buttons & variants", 
+      "name": "Buy buttons and variants", 
       "limit": 1, 
       "settings": [ 
         { "type": "checkbox", "id": "show_dynamic_checkout", "label": "Show dynamic checkout button", "default": true }, 

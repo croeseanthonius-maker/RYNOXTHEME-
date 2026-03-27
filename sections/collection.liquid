@@ -1,5 +1,12 @@
 <section class="collection-section">
   <div class="collection-section__container">
+    
+    {%- if collection.image -%}
+      <div class="collection-hero-image-wrapper">
+        {{ collection.image | image_url: width: 1200 | image_tag: alt: collection.title, class: 'collection-hero-image' }}
+      </div>
+    {%- endif -%}
+
     <div class="collection-section__header">
       <h1 class="collection-section__title">{{ collection.title }}</h1>
       {% if collection.description %}
@@ -74,6 +81,10 @@
       {% paginate collection.products by 20 %}
         {% for product in collection.products %}
           {% render 'product-card', product: product %}
+        {% else %}
+          <div class="collection-empty-message">
+            <p>Aucun produit n'a été trouvé dans cette collection.</p>
+          </div>
         {% endfor %}
 
         {{ paginate | default_pagination }}
@@ -85,6 +96,10 @@
 {% stylesheet %}
   .collection-section { width: 100vw; margin-left: calc(-50vw + 50%); padding: 60px 20px; background-attachment: fixed; background-repeat: no-repeat; background-size: cover; background-position: center; }
   .collection-section__container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 40px; box-sizing: border-box; }
+  
+  .collection-hero-image-wrapper { width: 100%; margin-bottom: 40px; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+  .collection-hero-image { width: 100%; height: auto; max-height: 400px; object-fit: cover; display: block; }
+  
   .collection-section__header { text-align: center; max-width: 700px; margin: 0 auto 40px; }
   .collection-section__title { font-size: 36px; font-weight: 700; color: #1f2937; margin: 0 0 20px 0; letter-spacing: -1px; font-family: montserrat, sans-serif; text-transform: uppercase; }
   .collection-section__description { font-size: 18px; color: #4b5563; margin: 0; line-height: 1.6; font-family: inter, sans-serif; }
@@ -104,8 +119,6 @@
   .glass-dropdown-list { margin: 0; padding: 0; list-style: none; }
   .glass-dropdown-item { display: block; width: 100%; text-align: left; background: transparent; border: none; padding: 10px 24px; color: #111; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; }
   .glass-dropdown-item:hover { background: rgba(0, 0, 0, 0.05); color: #000; padding-left: 28px; }
-  
-  /* L'élément actuellement sélectionné devient non-cliquable */
   .glass-dropdown-item.active { background: rgba(0, 0, 0, 0.1); color: #000; padding-left: 28px; cursor: default; pointer-events: none; }
 
   .filter-list { list-style: none; padding: 0; margin: 0; }
@@ -115,6 +128,9 @@
   .filter-price input { width: 80px; padding: 8px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.1); background: rgba(255,255,255,0.8); outline: none; }
 
   .collection-section__grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 32px; width: 100%; position: relative; z-index: 1; }
+  
+  .collection-empty-message { grid-column: 1 / -1; text-align: center; padding: 60px 20px; background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.3); }
+  .collection-empty-message p { font-size: 1.2rem; color: #111; font-weight: 600; margin: 0; }
 
   @media (max-width: 1024px) { .collection-section__grid { grid-template-columns: repeat(3, 1fr); gap: 24px; } }
   @media (max-width: 768px) { .collection-section__grid { grid-template-columns: repeat(2, 1fr); gap: 20px; } .collection-section { padding: 40px 20px; } .collection-section__container { padding: 0 20px; } .collection-section__title { font-size: 28px; } }

@@ -1,0 +1,121 @@
+<section class="snowpeak-customer-page">
+  <div class="page-width">
+    
+    <div class="customer-header">
+      <h1 class="customer-title">My Account</h1>
+      <a href="{{ routes.account_logout_url }}" class="logout-link">
+        <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+        Log out
+      </a>
+    </div>
+
+    <div class="account-grid">
+      
+      <div class="glass-page-panel account-orders">
+        <h2>Order History</h2>
+        
+        {% paginate customer.orders by 10 %}
+          {%- if customer.orders.size > 0 -%}
+            <table class="order-history-table">
+              <thead>
+                <tr>
+                  <th>Order</th>
+                  <th>Date</th>
+                  <th>Payment Status</th>
+                  <th>Fulfillment Status</th>
+                  <th>Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                {%- for order in customer.orders -%}
+                  <tr>
+                    <td data-label="Order">
+                      <a href="{{ order.customer_url }}" class="order-link">{{ order.name }}</a>
+                    </td>
+                    <td data-label="Date">{{ order.created_at | time_tag: format: 'date' }}</td>
+                    <td data-label="Payment Status">{{ order.financial_status_label }}</td>
+                    <td data-label="Fulfillment Status">{{ order.fulfillment_status_label }}</td>
+                    <td data-label="Total">{{ order.total_price | money }}</td>
+                  </tr>
+                {%- endfor -%}
+              </tbody>
+            </table>
+            
+            {%- if paginate.pages > 1 -%}
+              <div class="pagination-glass">
+                {{ paginate | default_pagination }}
+              </div>
+            {%- endif -%}
+            
+          {%- else -%}
+            <p class="empty-state">You haven't placed any orders yet.</p>
+          {%- endif -%}
+        {% endpaginate %}
+      </div>
+
+      <div class="glass-page-panel account-details">
+        <h2>Account Details</h2>
+        <div class="details-box">
+          <p class="customer-name"><strong>{{ customer.name }}</strong></p>
+          {{ customer.default_address | format_address }}
+          <a href="{{ routes.account_addresses_url }}" class="btn-glass-secondary">View Addresses ({{ customer.addresses_count }})</a>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .snowpeak-customer-page { width: 100vw; margin-left: calc(-50vw + 50%); padding: 120px 20px 60px 20px; min-height: 80vh; }
+  .customer-header { text-align: center; margin-bottom: 40px; }
+  .customer-title { font-size: 2.5rem; font-weight: 800; color: #111; margin-bottom: 15px; text-transform: uppercase; }
+  .logout-link { display: inline-flex; align-items: center; gap: 8px; color: #555; text-decoration: none; font-weight: 600; transition: color 0.3s; }
+  .logout-link:hover { color: #e74c3c; }
+  
+  .account-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 30px; max-width: 1200px; margin: 0 auto; align-items: start; }
+  
+  .glass-page-panel {
+    background: rgba(255, 255, 255, 0.65); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.5); box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    border-radius: 1.5rem; padding: 40px;
+  }
+  .glass-page-panel h2 { margin-top: 0; font-size: 1.5rem; font-weight: 800; text-transform: uppercase; margin-bottom: 25px; border-bottom: 2px solid rgba(0,0,0,0.1); padding-bottom: 15px; }
+  
+  .order-history-table { width: 100%; border-collapse: collapse; }
+  .order-history-table th { text-align: left; padding: 15px 10px; border-bottom: 2px solid rgba(0,0,0,0.1); font-weight: 700; text-transform: uppercase; font-size: 0.85rem; }
+  .order-history-table td { padding: 15px 10px; border-bottom: 1px solid rgba(0,0,0,0.05); }
+  .order-link { font-weight: 700; color: #111; text-decoration: underline; text-underline-offset: 4px; }
+  .empty-state { color: #555; font-style: italic; }
+  
+  .details-box { font-size: 1rem; line-height: 1.6; color: #444; }
+  .customer-name { font-size: 1.2rem; color: #111; margin-bottom: 10px; }
+  
+  .btn-glass-secondary {
+    display: inline-block; margin-top: 20px; padding: 10px 20px;
+    background: transparent; border: 2px solid #111; color: #111;
+    border-radius: 50px; font-weight: 700; text-decoration: none; text-align: center;
+    transition: all 0.3s ease; width: 100%;
+  }
+  .btn-glass-secondary:hover { background: #111; color: #fff; }
+
+  .pagination-glass { margin-top: 30px; text-align: center; }
+  .pagination-glass a, .pagination-glass span { padding: 8px 15px; margin: 0 5px; background: rgba(255,255,255,0.5); border-radius: 8px; text-decoration: none; color: #111; font-weight: 600; }
+  .pagination-glass .current { background: #111; color: #fff; }
+
+  @media (max-width: 900px) {
+    .account-grid { grid-template-columns: 1fr; }
+    .order-history-table thead { display: none; }
+    .order-history-table tr { display: block; margin-bottom: 20px; border: 1px solid rgba(0,0,0,0.1); border-radius: 12px; padding: 15px; background: rgba(255,255,255,0.3); }
+    .order-history-table td { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(0,0,0,0.05); padding: 10px 0; }
+    .order-history-table td:last-child { border-bottom: none; }
+    .order-history-table td::before { content: attr(data-label); font-weight: 700; font-size: 0.8rem; text-transform: uppercase; color: #555; }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Account",
+  "settings": []
+}
+{% endschema %}

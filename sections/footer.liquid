@@ -1,4 +1,4 @@
-<footer class="footer-modern" style="background: linear-gradient(135deg, {{ section.settings.bg_color_1 | default: '#0a0a0a' }} 0%, {{ section.settings.bg_color_2 | default: '#1a1a1a' }} 100%);">
+<footer class="footer-modern" style="background: linear-gradient(135deg, {{ section.settings.bg_color_1 | default: '#0a0a0a' }} 0%, {{ section.settings.bg_color_2 | default: '#1a1a1a' }} 100%); --footer-text-color: {{ section.settings.text_color | default: '#ffffff' }};">
   
   <div class="footer-top-section">
     <div class="container">
@@ -6,7 +6,7 @@
         <div class="footer-logo-wrapper">
           <a href="{{ routes.root_url }}">
             {% if settings.logo != blank %}
-              {{ settings.logo | image_url: width: 200 | image_tag: alt: shop.name, class: 'footer-logo' }}
+              {{ settings.logo | image_url: width: 200 | image_tag: loading: 'lazy', alt: shop.name, class: 'footer-logo' }}
             {% else %}
               <span class="footer-shop-name">{{ shop.name }}</span>
             {% endif %}
@@ -15,14 +15,14 @@
 
         <div class="social-media-wrapper">
           <ul class="social-links">
-            {% if section.settings.facebook_url %}
-            <li><a href="{{ section.settings.facebook_url }}" class="btn-social" aria-label="Facebook"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg></a></li>
+            {% if settings.social_facebook_link != blank %}
+            <li><a href="{{ settings.social_facebook_link }}" class="btn-social" aria-label="Facebook"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg></a></li>
             {% endif %}
-            {% if section.settings.twitter_url %}
-            <li><a href="{{ section.settings.twitter_url }}" class="btn-social" aria-label="X (formerly Twitter)"><svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M12.6.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867-5.07-4.425 5.07H.316l5.733-6.57L0 .75h5.063l3.495 4.633L12.601.75Zm-.86 13.028h1.36L4.323 2.145H2.865l8.875 11.633Z"/></svg></a></li>
+            {% if settings.social_twitter_link != blank %}
+            <li><a href="{{ settings.social_twitter_link }}" class="btn-social" aria-label="X (formerly Twitter)"><svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M12.6.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867-5.07-4.425 5.07H.316l5.733-6.57L0 .75h5.063l3.495 4.633L12.601.75Zm-.86 13.028h1.36L4.323 2.145H2.865l8.875 11.633Z"/></svg></a></li>
             {% endif %}
-            {% if section.settings.instagram_url %}
-            <li><a href="{{ section.settings.instagram_url }}" class="btn-social" aria-label="Instagram"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg></a></li>
+            {% if settings.social_instagram_link != blank %}
+            <li><a href="{{ settings.social_instagram_link }}" class="btn-social" aria-label="Instagram"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg></a></li>
             {% endif %}
           </ul>
         </div>
@@ -140,7 +140,7 @@
         
         <div class="footer-bottom-left">
           <div class="copyright-wrapper">
-            &copy; {{ 'now' | date: '%Y' }} {{ shop.name }}. {{ section.settings.copyright_text }}
+            &copy; {{ 'now' | date: '%Y' }} {{ shop.name }}. {{ section.settings.copyright_text }} {{ powered_by_link }}
           </div>
           <div class="credit-wrapper">
             {{ section.settings.credit_text }}
@@ -259,7 +259,7 @@
   
   .footer-logo-wrapper a { text-decoration: none; }
   .footer-logo { max-height: 50px; width: auto; filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3)); }
-  .footer-shop-name { color: white; font-size: 24px; font-weight: 700; letter-spacing: 2px; text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5); }
+  .footer-shop-name { color: var(--footer-text-color); font-size: 24px; font-weight: 700; letter-spacing: 2px; text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5); }
   
   .social-links { 
     display: flex; 
@@ -271,7 +271,7 @@
   
   .btn-social { 
     border: 1px solid rgba(255, 255, 255, 0.25); 
-    color: white; 
+    color: var(--footer-text-color); 
     width: 44px; 
     height: 44px; 
     display: inline-flex; 
@@ -290,7 +290,7 @@
     transform: translateY(-4px); 
     border-color: rgba(255, 255, 255, 0.4); 
     box-shadow: 0 12px 24px rgba(147, 112, 219, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.3); 
-    color: white;
+    color: var(--footer-text-color);
   }
 
   /* --- LINKS SECTION --- */
@@ -308,7 +308,7 @@
   }
   
   .footer-heading { 
-    color: #fff; 
+    color: var(--footer-text-color); 
     font-size: 16px; 
     font-weight: 600; 
     margin: 0 0 20px 0; 
@@ -344,7 +344,7 @@
   }
   
   .footer-menu a:hover { 
-    color: #fff; 
+    color: var(--footer-text-color); 
     padding-left: 4px; 
   }
 
@@ -364,7 +364,7 @@
   .btn-glass-select { 
     background: rgba(255, 255, 255, 0.1); 
     border: 1px solid rgba(255, 255, 255, 0.2); 
-    color: #fff; 
+    color: var(--footer-text-color); 
     padding: 10px 20px; 
     border-radius: 50px; 
     font-size: 13px; 
@@ -407,7 +407,7 @@
   }
   .dropdown-glass-list li a:hover, .dropdown-glass-list li a[aria-current="true"] { 
     background: rgba(255, 255, 255, 0.1); 
-    color: #fff; 
+    color: var(--footer-text-color); 
   }
   
   .custom-scrollbar::-webkit-scrollbar { width: 6px; }
@@ -455,7 +455,7 @@
     border-right: 1px solid rgba(255, 255, 255, 0.2);
   }
   .footer-legal-links li:last-child a { border-right: none; padding-right: 0; }
-  .footer-legal-links a:hover { color: #fff; }
+  .footer-legal-links a:hover { color: var(--footer-text-color); }
 
   /* --- RESPONSIVE --- */
   @media (max-width: 992px) {
@@ -475,7 +475,7 @@
     .footer-modern .container { padding: 0 20px; }
     .footer-links-grid { grid-template-columns: 1fr; text-align: center; gap: 30px; }
     .footer-heading::after { left: 50%; transform: translateX(-50%); }
-    .footer-menu a:hover { padding-left: 0; color: #fff; }
+    .footer-menu a:hover { padding-left: 0; color: var(--footer-text-color); }
   }
 {% endstylesheet %}
 
@@ -485,10 +485,8 @@
    "settings": [
      { "type": "color", "id": "bg_color_1", "label": "Background color (Top)", "default": "#0a0a0a" },
      { "type": "color", "id": "bg_color_2", "label": "Background color (Bottom)", "default": "#1a1a1a" },
+     { "type": "color", "id": "text_color", "label": "Text color", "default": "#ffffff" },
      { "type": "checkbox", "id": "enable_follow_on_shop", "label": "Enable Follow on Shop", "default": true },
-     { "type": "text", "id": "facebook_url", "label": "Facebook URL" },
-     { "type": "text", "id": "twitter_url", "label": "X (Twitter) URL" },
-     { "type": "text", "id": "instagram_url", "label": "Instagram URL" },
      { "type": "text", "id": "col1_title", "label": "Column 1 title", "default": "Accessibility" },
      { "type": "link_list", "id": "col1_menu", "label": "Column 1 menu", "default": "footer" },
      { "type": "text", "id": "col2_title", "label": "Column 2 title", "default": "Store" },

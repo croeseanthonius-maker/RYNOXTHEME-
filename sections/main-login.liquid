@@ -1,0 +1,141 @@
+<section class="snowpeak-customer-page">
+  <div class="page-width">
+    
+    <div id="RecoverPassword" class="glass-page-panel auth-panel hidden">
+      <h1 class="auth-title">Reset Password</h1>
+      <p class="auth-subtitle">We will send you an email to reset your password.</p>
+      
+      {% form 'recover_customer_password' %}
+        {% assign recover_success = form.posted_successfully? %}
+        
+        <div class="form-errors">
+          {{ form.errors | default_errors }}
+        </div>
+
+        <div class="field">
+          <label for="RecoverEmail">Email</label>
+          <input type="email" value="" name="email" id="RecoverEmail" autocorrect="off" autocapitalize="off" autocomplete="email" required>
+        </div>
+        
+        <div class="form-actions">
+          <button type="submit" class="btn-primary">Submit</button>
+          <a href="#Login" class="cancel-link" onclick="toggleRecover(false); return false;">Cancel</a>
+        </div>
+      {% endform %}
+    </div>
+
+    <div id="CustomerLogin" class="glass-page-panel auth-panel">
+      <h1 class="auth-title">Login</h1>
+      <p class="auth-subtitle">Welcome back! Please enter your details.</p>
+      
+      {%- if recover_success == true -%}
+        <div class="success-message" tabindex="-1" autofocus>
+          <p>We've sent you an email with a link to update your password.</p>
+        </div>
+      {%- endif -%}
+
+      {% form 'customer_login', novalidate: 'novalidate' %}
+        <div class="form-errors">
+          {{ form.errors | default_errors }}
+        </div>
+
+        <div class="field">
+          <label for="CustomerEmail">Email</label>
+          <input type="email" name="customer[email]" id="CustomerEmail" autocomplete="email" autocorrect="off" autocapitalize="off" required>
+        </div>
+
+        {%- if form.password_needed -%}
+          <div class="field">
+            <div class="label-with-link">
+              <label for="CustomerPassword">Password</label>
+              <a href="#RecoverPassword" class="forgot-link" onclick="toggleRecover(true); return false;">Forgot your password?</a>
+            </div>
+            <input type="password" value="" name="customer[password]" id="CustomerPassword" autocomplete="current-password" required>
+          </div>
+        {%- endif -%}
+
+        <div class="form-actions">
+          <button type="submit" class="btn-primary full-width">Sign In</button>
+        </div>
+        
+        <div class="auth-footer">
+          <p>Don't have an account? <a href="{{ routes.account_register_url }}">Create one</a></p>
+        </div>
+      {% endform %}
+      
+      {%- if shop.checkout.guest_login -%}
+        <div class="guest-login-section">
+          <hr>
+          <h2>Continue as a guest</h2>
+          {% form 'guest_login' %}
+            <button type="submit" class="btn-secondary full-width">Continue</button>
+          {% endform %}
+        </div>
+      {%- endif -%}
+    </div>
+
+  </div>
+</section>
+
+<script>
+  function toggleRecover(show) {
+    document.getElementById('RecoverPassword').classList.toggle('hidden', !show);
+    document.getElementById('CustomerLogin').classList.toggle('hidden', show);
+  }
+
+  // Si l'URL contient #recover, on affiche directement le formulaire de récupération
+  if (window.location.hash === '#recover') {
+    toggleRecover(true);
+  }
+</script>
+
+{% stylesheet %}
+  .snowpeak-customer-page { width: 100vw; margin-left: calc(-50vw + 50%); padding: 120px 20px 60px 20px; min-height: 80vh; display: flex; align-items: center; justify-content: center; }
+  
+  .auth-panel { max-width: 500px; width: 100%; margin: 0 auto; padding: 50px 40px; }
+  .auth-panel.hidden { display: none; }
+  
+  .auth-title { font-size: 2.5rem; font-weight: 800; color: #111; margin: 0 0 10px 0; text-align: center; text-transform: uppercase; }
+  .auth-subtitle { text-align: center; color: #555; margin-bottom: 30px; font-size: 1rem; }
+  
+  .field { margin-bottom: 20px; }
+  .field label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.9rem; color: #111; }
+  .field input { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid rgba(0,0,0,0.1); background: rgba(255,255,255,0.6); outline: none; transition: border-color 0.3s; }
+  .field input:focus { border-color: #111; }
+  
+  .label-with-link { display: flex; justify-content: space-between; align-items: center; }
+  .forgot-link { font-size: 0.85rem; color: #555; text-decoration: none; font-weight: 600; transition: color 0.3s; }
+  .forgot-link:hover { color: #111; }
+  
+  .btn-primary { background: #111; color: #fff; padding: 15px 30px; border: none; border-radius: 50px; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; transition: background 0.3s; }
+  .btn-primary:hover { background: #333; }
+  .btn-primary.full-width { width: 100%; margin-top: 10px; }
+  
+  .btn-secondary { background: transparent; color: #111; border: 2px solid #111; padding: 15px 30px; border-radius: 50px; font-weight: 700; cursor: pointer; text-transform: uppercase; transition: all 0.3s; }
+  .btn-secondary:hover { background: #111; color: #fff; }
+  .btn-secondary.full-width { width: 100%; }
+  
+  .form-actions { display: flex; flex-direction: column; align-items: center; gap: 15px; }
+  .cancel-link { color: #555; text-decoration: none; font-weight: 600; }
+  .cancel-link:hover { color: #111; }
+  
+  .auth-footer { margin-top: 30px; text-align: center; font-size: 0.95rem; color: #555; border-top: 1px solid rgba(0,0,0,0.1); padding-top: 20px; }
+  .auth-footer a { color: #111; font-weight: 700; text-decoration: underline; text-underline-offset: 4px; }
+  
+  .form-errors { color: #e74c3c; margin-bottom: 20px; font-size: 0.9rem; }
+  .form-errors ul { padding-left: 20px; margin: 5px 0 0 0; }
+  .success-message { background: rgba(39, 174, 96, 0.1); border-left: 4px solid #27ae60; padding: 15px; margin-bottom: 25px; border-radius: 8px; color: #27ae60; font-weight: 600; }
+  
+  .guest-login-section { margin-top: 40px; text-align: center; }
+  .guest-login-section hr { border: none; border-top: 1px solid rgba(0,0,0,0.1); margin-bottom: 30px; }
+  .guest-login-section h2 { font-size: 1.2rem; margin-bottom: 20px; }
+
+  @media (max-width: 768px) { .auth-panel { padding: 40px 20px; } }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Login",
+  "settings": []
+}
+{% endschema %}

@@ -1,0 +1,85 @@
+<section class="snowpeak-customer-page">
+  <div class="page-width">
+    
+    <div class="glass-page-panel auth-panel">
+      <h1 class="auth-title">Create Account</h1>
+      <p class="auth-subtitle">Join us to keep track of your orders and save your details.</p>
+      
+      {% form 'create_customer', novalidate: 'novalidate' %}
+        <div class="form-errors">
+          {{ form.errors | default_errors }}
+        </div>
+
+        <div class="name-row">
+          <div class="field">
+            <label for="RegisterForm-FirstName">First Name</label>
+            <input type="text" name="customer[first_name]" id="RegisterForm-FirstName" autocomplete="given-name">
+          </div>
+          <div class="field">
+            <label for="RegisterForm-LastName">Last Name</label>
+            <input type="text" name="customer[last_name]" id="RegisterForm-LastName" autocomplete="family-name">
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="RegisterForm-email">Email</label>
+          <input type="email" name="customer[email]" id="RegisterForm-email" autocomplete="email" autocorrect="off" autocapitalize="off" required>
+        </div>
+
+        <div class="field">
+          <label for="RegisterForm-password">Password</label>
+          <input type="password" name="customer[password]" id="RegisterForm-password" required>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn-primary full-width">Create Account</button>
+        </div>
+        
+        <div class="auth-footer">
+          <p>Already have an account? <a href="{{ routes.account_login_url }}">Log in</a></p>
+        </div>
+      {% endform %}
+    </div>
+
+  </div>
+</section>
+
+{% stylesheet %}
+  /* Les styles principaux sont hérités ou partagés avec le login pour plus de consistance */
+  .snowpeak-customer-page { width: 100vw; margin-left: calc(-50vw + 50%); padding: 120px 20px 60px 20px; min-height: 80vh; display: flex; align-items: center; justify-content: center; }
+  
+  .auth-panel { max-width: 500px; width: 100%; margin: 0 auto; padding: 50px 40px; }
+  
+  .auth-title { font-size: 2.5rem; font-weight: 800; color: #111; margin: 0 0 10px 0; text-align: center; text-transform: uppercase; }
+  .auth-subtitle { text-align: center; color: #555; margin-bottom: 30px; font-size: 1rem; }
+  
+  .name-row { display: flex; gap: 15px; }
+  .name-row .field { flex: 1; }
+  
+  .field { margin-bottom: 20px; }
+  .field label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.9rem; color: #111; }
+  .field input { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid rgba(0,0,0,0.1); background: rgba(255,255,255,0.6); outline: none; transition: border-color 0.3s; }
+  .field input:focus { border-color: #111; }
+  
+  .btn-primary { background: #111; color: #fff; padding: 15px 30px; border: none; border-radius: 50px; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; transition: background 0.3s; }
+  .btn-primary:hover { background: #333; }
+  .btn-primary.full-width { width: 100%; margin-top: 10px; }
+  
+  .auth-footer { margin-top: 30px; text-align: center; font-size: 0.95rem; color: #555; border-top: 1px solid rgba(0,0,0,0.1); padding-top: 20px; }
+  .auth-footer a { color: #111; font-weight: 700; text-decoration: underline; text-underline-offset: 4px; }
+  
+  .form-errors { color: #e74c3c; margin-bottom: 20px; font-size: 0.9rem; }
+  .form-errors ul { padding-left: 20px; margin: 5px 0 0 0; }
+
+  @media (max-width: 768px) { 
+    .auth-panel { padding: 40px 20px; } 
+    .name-row { flex-direction: column; gap: 0; }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Register",
+  "settings": []
+}
+{% endschema %}

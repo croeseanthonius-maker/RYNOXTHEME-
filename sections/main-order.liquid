@@ -1,0 +1,210 @@
+<section class="snowpeak-customer-page">
+  <div class="page-width">
+    
+    <div class="customer-header">
+      <h1 class="customer-title">Order {{ order.name }}</h1>
+      <a href="{{ routes.account_url }}" class="back-link">&larr; Return to Account</a>
+    </div>
+
+    <div class="order-grid">
+      
+      <div class="glass-page-panel order-items-panel">
+        <p class="order-date">Placed on {{ order.created_at | time_tag: format: 'date_at_time' }}</p>
+        
+        {%- if order.cancelled -%}
+          <div class="order-cancelled-notice">
+            <p>Order Cancelled on {{ order.cancelled_at | time_tag: format: 'date_at_time' }}</p>
+            <p>Reason: {{ order.cancel_reason_label }}</p>
+          </div>
+        {%- endif -%}
+
+        <table class="order-table">
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Price</th>
+              <th>Quantity</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            {%- for line_item in order.line_items -%}
+              <tr>
+                <td data-label="Product">
+                  <a href="{{ line_item.product.url }}" class="item-title">{{ line_item.title }}</a>
+                  
+                  {%- if line_item.selling_plan_allocation -%}
+                    <p class="selling-plan-note">
+                      <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M21.5 2v6h-6M2.13 15.57a9 9 0 1 0 3.8-10.15l-3.3 2"></path></svg>
+                      {{ line_item.selling_plan_allocation.selling_plan.name }}
+                    </p>
+                  {%- endif -%}
+
+                  {%- if line_item.line_level_discount_allocations != blank -%}
+                    <ul class="discount-list">
+                      {%- for discount_allocation in line_item.line_level_discount_allocations -%}
+                        <li>
+                          <svg aria-hidden="true" focusable="false" viewBox="0 0 12 12" width="12" height="12"><path fill-rule="evenodd" clip-rule="evenodd" d="M7 0h3a2 2 0 012 2v3a1 1 0 01-.3.7l-6 6a1 1 0 01-1.4 0l-4-4a1 1 0 010-1.4l6-6A1 1 0 017 0zm2 2a1 1 0 102 0 1 1 0 00-2 0z" fill="currentColor"></path></svg>
+                          {{ discount_allocation.discount_application.title }} (-{{ discount_allocation.amount | money }})
+                        </li>
+                      {%- endfor -%}
+                    </ul>
+                  {%- endif -%}
+                </td>
+                
+                <td data-label="Price">
+                  {%- if line_item.original_price != line_item.final_price or line_item.unit_price_measurement -%}
+                    <dl>
+                      {%- if line_item.original_price != line_item.final_price -%}
+                        <dt class="visually-hidden">Original price</dt>
+                        <dd><s>{{ line_item.original_price | money }}</s></dd>
+                        <dt class="visually-hidden">Discounted price</dt>
+                        <dd>{{ line_item.final_price | money }}</dd>
+                      {%- else -%}
+                        <dt class="visually-hidden">Price</dt>
+                        <dd>{{ line_item.final_price | money }}</dd>
+                      {%- endif -%}
+                      
+                      {%- if line_item.unit_price_measurement -%}
+                        <dt class="visually-hidden">Unit price</dt>
+                        <dd class="unit-price">
+                          {{ line_item.unit_price | money }} / 
+                          {%- if line_item.unit_price_measurement.reference_value != 1 -%}
+                            {{- line_item.unit_price_measurement.reference_value -}}
+                          {%- endif -%}
+                          {{ line_item.unit_price_measurement.reference_unit }}
+                        </dd>
+                      {%- endif -%}
+                    </dl>
+                  {%- else -%}
+                    <span>{{ line_item.final_price | money }}</span>
+                  {%- endif -%}
+                </td>
+                
+                <td data-label="Quantity">{{ line_item.quantity }}</td>
+                
+                <td data-label="Total">{{ line_item.final_line_price | money }}</td>
+              </tr>
+            {%- endfor -%}
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="3">Subtotal</td>
+              <td>{{ order.line_items_subtotal_price | money }}</td>
+            </tr>
+            
+            {%- if order.cart_level_discount_applications != blank -%}
+              {%- for discount_application in order.cart_level_discount_applications -%}
+                <tr class="discount-row">
+                  <td colspan="3">Discount ({{ discount_application.title }})</td>
+                  <td>-{{ discount_application.total_allocated_amount | money }}</td>
+                </tr>
+              {%- endfor -%}
+            {%- endif -%}
+            
+            {%- for shipping_method in order.shipping_methods -%}
+              <tr>
+                <td colspan="3">Shipping ({{ shipping_method.title }})</td>
+                <td>{{ shipping_method.price | money }}</td>
+              </tr>
+            {%- endfor -%}
+            
+            {%- for tax_line in order.tax_lines -%}
+              <tr>
+                <td colspan="3">Tax ({{ tax_line.title }} {{ tax_line.rate | times: 100 }}%)</td>
+                <td>{{ tax_line.price | money }}</td>
+              </tr>
+            {%- endfor -%}
+            
+            <tr class="grand-total-row">
+              <td colspan="3"><strong>Total</strong></td>
+              <td><strong>{{ order.total_price | money }} {{ order.currency }}</strong></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      <div class="order-sidebar">
+        <div class="glass-page-panel sidebar-panel">
+          <h3>Billing Address</h3>
+          <p class="status-badge"><strong>Payment Status:</strong> {{ order.financial_status_label }}</p>
+          <div class="address-box">
+            {{ order.billing_address | format_address }}
+          </div>
+        </div>
+        
+        <div class="glass-page-panel sidebar-panel">
+          <h3>Shipping Address</h3>
+          <p class="status-badge"><strong>Fulfillment Status:</strong> {{ order.fulfillment_status_label }}</p>
+          <div class="address-box">
+            {{ order.shipping_address | format_address }}
+          </div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .snowpeak-customer-page {
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
+    padding: 120px 20px 60px 20px;
+    min-height: 80vh;
+  }
+  .customer-header { text-align: center; margin-bottom: 40px; }
+  .customer-title { font-size: 2.5rem; font-weight: 800; color: #111; margin-bottom: 10px; text-transform: uppercase; }
+  .back-link { color: #555; text-decoration: none; font-weight: 600; text-transform: uppercase; font-size: 0.85rem; transition: color 0.3s; }
+  .back-link:hover { color: #111; }
+  
+  .order-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 30px; align-items: start; max-width: 1200px; margin: 0 auto; }
+  
+  .glass-page-panel {
+    background: rgba(255, 255, 255, 0.65);
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    border-radius: 1.5rem; padding: 40px;
+  }
+  .sidebar-panel { padding: 30px; margin-bottom: 20px; }
+  .sidebar-panel h3 { margin-top: 0; font-size: 1.2rem; font-weight: 800; text-transform: uppercase; margin-bottom: 15px; }
+  
+  .order-date { color: #555; font-size: 0.9rem; margin-bottom: 25px; }
+  .order-cancelled-notice { background: rgba(231, 76, 60, 0.1); border-left: 4px solid #e74c3c; padding: 15px; margin-bottom: 25px; border-radius: 8px; }
+  .order-cancelled-notice p { margin: 0; color: #c0392b; font-weight: 600; }
+  
+  .order-table { width: 100%; border-collapse: collapse; }
+  .order-table th { text-align: left; padding-bottom: 15px; border-bottom: 2px solid rgba(0,0,0,0.1); font-weight: 700; text-transform: uppercase; font-size: 0.85rem; }
+  .order-table td { padding: 20px 0; border-bottom: 1px solid rgba(0,0,0,0.05); vertical-align: top; }
+  .item-title { font-weight: 700; color: #111; text-decoration: none; display: block; margin-bottom: 5px; }
+  
+  .selling-plan-note, .unit-price { font-size: 0.8rem; color: #555; margin-top: 5px; font-weight: 600; }
+  .discount-list { list-style: none; padding: 0; margin: 5px 0 0 0; color: #27ae60; font-size: 0.85rem; font-weight: 600; }
+  .discount-row td { color: #27ae60; }
+  
+  .order-table tfoot td { padding: 15px 0; border-bottom: 1px solid rgba(0,0,0,0.05); }
+  .grand-total-row td { font-size: 1.2rem; border-bottom: none; border-top: 2px solid rgba(0,0,0,0.1); padding-top: 20px; }
+  
+  .status-badge { font-size: 0.85rem; margin-bottom: 15px; color: #111; }
+  .address-box { font-size: 0.95rem; line-height: 1.6; color: #444; }
+  .visually-hidden { position: absolute !important; overflow: hidden; width: 1px; height: 1px; margin: -1px; padding: 0; border: 0; clip: rect(0 0 0 0); word-wrap: normal !important; }
+
+  @media (max-width: 900px) {
+    .order-grid { grid-template-columns: 1fr; }
+    .order-table thead { display: none; }
+    .order-table tr { display: block; margin-bottom: 20px; border-bottom: 2px solid rgba(0,0,0,0.1); padding-bottom: 20px; }
+    .order-table td { display: flex; justify-content: space-between; align-items: center; border-bottom: none; padding: 10px 0; }
+    .order-table td::before { content: attr(data-label); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; margin-right: 15px; }
+    .order-table tfoot tr { display: flex; justify-content: space-between; border-bottom: 1px solid rgba(0,0,0,0.05); }
+    .order-table tfoot td::before { display: none; }
+    .order-table tfoot td[colspan] { width: 50%; }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Order Details",
+  "settings": []
+}
+{% endschema %} 

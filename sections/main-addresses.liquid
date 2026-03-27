@@ -1,0 +1,227 @@
+<section class="snowpeak-customer-page">
+  <div class="page-width">
+    
+    <div class="customer-header">
+      <h1 class="customer-title">Addresses</h1>
+      <a href="{{ routes.account_url }}" class="back-link">&larr; Return to Account</a>
+    </div>
+
+    <div class="addresses-container">
+      
+      {% paginate customer.addresses by 5 %}
+        <div class="address-grid">
+          {%- for address in customer.addresses -%}
+            <div class="glass-page-panel address-card">
+              {%- if address == customer.default_address -%}
+                <span class="default-badge">Default</span>
+              {%- endif -%}
+              
+              <div class="address-content">
+                {{ address | format_address }}
+              </div>
+              
+              <div class="address-actions">
+                <button type="button" class="btn-edit" aria-controls="EditAddress_{{ address.id }}" aria-expanded="false" onclick="toggleForm('EditAddress_{{ address.id }}')">Edit</button>
+                <form class="address-delete-form" method="post" action="{{ routes.account_addresses_url }}/{{ address.id }}">
+                  <input type="hidden" name="_method" value="delete">
+                  <button type="submit" class="btn-delete" data-confirm-message="Are you sure you wish to delete this address?">Delete</button>
+                </form>
+              </div>
+
+              <div id="EditAddress_{{ address.id }}" class="address-form-wrapper hidden">
+                <h2>Edit Address</h2>
+                {% form 'customer_address', address %}
+                  <div class="form-row">
+                    <div class="field">
+                      <label for="AddressFirstName_{{ form.id }}">First Name</label>
+                      <input type="text" id="AddressFirstName_{{ form.id }}" name="address[first_name]" value="{{ form.first_name }}">
+                    </div>
+                    <div class="field">
+                      <label for="AddressLastName_{{ form.id }}">Last Name</label>
+                      <input type="text" id="AddressLastName_{{ form.id }}" name="address[last_name]" value="{{ form.last_name }}">
+                    </div>
+                  </div>
+                  <div class="field">
+                    <label for="AddressCompany_{{ form.id }}">Company</label>
+                    <input type="text" id="AddressCompany_{{ form.id }}" name="address[company]" value="{{ form.company }}">
+                  </div>
+                  <div class="field">
+                    <label for="AddressAddress1_{{ form.id }}">Address 1</label>
+                    <input type="text" id="AddressAddress1_{{ form.id }}" name="address[address1]" value="{{ form.address1 }}">
+                  </div>
+                  <div class="field">
+                    <label for="AddressAddress2_{{ form.id }}">Address 2</label>
+                    <input type="text" id="AddressAddress2_{{ form.id }}" name="address[address2]" value="{{ form.address2 }}">
+                  </div>
+                  <div class="form-row">
+                    <div class="field">
+                      <label for="AddressCity_{{ form.id }}">City</label>
+                      <input type="text" id="AddressCity_{{ form.id }}" name="address[city]" value="{{ form.city }}">
+                    </div>
+                    <div class="field">
+                      <label for="AddressCountry_{{ form.id }}">Country</label>
+                      <select id="AddressCountry_{{ form.id }}" name="address[country]" data-default="{{ form.country }}">{{ all_country_option_tags }}</select>
+                    </div>
+                  </div>
+                  <div class="form-row">
+                    <div class="field">
+                      <label for="AddressZip_{{ form.id }}">Postal/Zip Code</label>
+                      <input type="text" id="AddressZip_{{ form.id }}" name="address[zip]" value="{{ form.zip }}">
+                    </div>
+                    <div class="field">
+                      <label for="AddressPhone_{{ form.id }}">Phone</label>
+                      <input type="tel" id="AddressPhone_{{ form.id }}" name="address[phone]" value="{{ form.phone }}">
+                    </div>
+                  </div>
+                  <div class="field default-checkbox">
+                    {{ form.set_as_default_checkbox }}
+                    <label for="address_default_address_{{ form.id }}">Set as default address</label>
+                  </div>
+                  <div class="form-actions">
+                    <button type="submit" class="btn-primary">Update Address</button>
+                    <button type="button" class="btn-cancel" onclick="toggleForm('EditAddress_{{ address.id }}')">Cancel</button>
+                  </div>
+                {% endform %}
+              </div>
+            </div>
+          {%- endfor -%}
+        </div>
+
+        {%- if paginate.pages > 1 -%}
+          <div class="pagination-glass">
+            {{ paginate | default_pagination }}
+          </div>
+        {%- endif -%}
+      {% endpaginate %}
+
+      <div class="add-new-wrapper">
+        <button type="button" class="btn-primary add-new-btn" aria-expanded="false" aria-controls="AddAddress" onclick="toggleForm('AddAddress')">Add New Address</button>
+      </div>
+
+      <div id="AddAddress" class="glass-page-panel address-form-wrapper hidden">
+        <h2>Add a New Address</h2>
+        {% form 'customer_address', customer.new_address %}
+          <div class="form-row">
+            <div class="field">
+              <label for="AddressFirstNameNew">First Name</label>
+              <input type="text" id="AddressFirstNameNew" name="address[first_name]" value="{{ form.first_name }}">
+            </div>
+            <div class="field">
+              <label for="AddressLastNameNew">Last Name</label>
+              <input type="text" id="AddressLastNameNew" name="address[last_name]" value="{{ form.last_name }}">
+            </div>
+          </div>
+          <div class="field">
+            <label for="AddressCompanyNew">Company</label>
+            <input type="text" id="AddressCompanyNew" name="address[company]" value="{{ form.company }}">
+          </div>
+          <div class="field">
+            <label for="AddressAddress1New">Address 1</label>
+            <input type="text" id="AddressAddress1New" name="address[address1]" value="{{ form.address1 }}">
+          </div>
+          <div class="field">
+            <label for="AddressAddress2New">Address 2</label>
+            <input type="text" id="AddressAddress2New" name="address[address2]" value="{{ form.address2 }}">
+          </div>
+          <div class="form-row">
+            <div class="field">
+              <label for="AddressCityNew">City</label>
+              <input type="text" id="AddressCityNew" name="address[city]" value="{{ form.city }}">
+            </div>
+            <div class="field">
+              <label for="AddressCountryNew">Country</label>
+              <select id="AddressCountryNew" name="address[country]" data-default="{{ form.country }}">{{ all_country_option_tags }}</select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="field">
+              <label for="AddressZipNew">Postal/Zip Code</label>
+              <input type="text" id="AddressZipNew" name="address[zip]" value="{{ form.zip }}">
+            </div>
+            <div class="field">
+              <label for="AddressPhoneNew">Phone</label>
+              <input type="tel" id="AddressPhoneNew" name="address[phone]" value="{{ form.phone }}">
+            </div>
+          </div>
+          <div class="field default-checkbox">
+            {{ form.set_as_default_checkbox }}
+            <label for="address_default_address_new">Set as default address</label>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn-primary">Add Address</button>
+            <button type="button" class="btn-cancel" onclick="toggleForm('AddAddress')">Cancel</button>
+          </div>
+        {% endform %}
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<script>
+  function toggleForm(id) {
+    const form = document.getElementById(id);
+    if (form.classList.contains('hidden')) {
+      form.classList.remove('hidden');
+      form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } else {
+      form.classList.add('hidden');
+    }
+  }
+
+  window.onload = () => {
+    document.querySelectorAll('.btn-delete').forEach(button => {
+      button.addEventListener('click', function(evt) {
+        if (!window.confirm(this.getAttribute('data-confirm-message'))) {
+          evt.preventDefault();
+        }
+      });
+    });
+  }
+</script>
+
+{% stylesheet %}
+  .addresses-container { max-width: 900px; margin: 0 auto; }
+  .address-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 30px; margin-bottom: 40px; }
+  
+  .address-card { position: relative; padding: 40px 30px; }
+  .default-badge { position: absolute; top: 15px; right: 15px; background: #111; color: #fff; font-size: 0.75rem; font-weight: 700; padding: 4px 10px; border-radius: 20px; text-transform: uppercase; }
+  
+  .address-content { margin-bottom: 25px; line-height: 1.6; color: #333; }
+  .address-actions { display: flex; gap: 10px; border-top: 1px solid rgba(0,0,0,0.1); padding-top: 15px; }
+  
+  .btn-edit, .btn-delete, .btn-cancel { background: transparent; border: none; font-weight: 700; cursor: pointer; text-transform: uppercase; font-size: 0.85rem; padding: 5px 0; }
+  .btn-edit { color: #111; margin-right: 15px; }
+  .btn-delete { color: #e74c3c; }
+  
+  .add-new-wrapper { text-align: center; margin: 40px 0; }
+  .btn-primary { background: #111; color: #fff; padding: 12px 30px; border: none; border-radius: 50px; font-weight: 700; cursor: pointer; text-transform: uppercase; transition: background 0.3s; }
+  .btn-primary:hover { background: #333; }
+  
+  .address-form-wrapper { margin-top: 30px; }
+  .address-form-wrapper.hidden { display: none; }
+  .address-form-wrapper h2 { font-size: 1.5rem; margin-bottom: 25px; }
+  
+  .form-row { display: flex; gap: 20px; }
+  .form-row .field { flex: 1; }
+  .field { margin-bottom: 20px; }
+  .field label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.9rem; }
+  .field input, .field select { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.1); background: rgba(255,255,255,0.6); outline: none; }
+  
+  .default-checkbox { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+  .default-checkbox input { width: auto; margin: 0; }
+  .default-checkbox label { margin: 0; font-weight: 500; }
+  
+  .form-actions { display: flex; gap: 15px; align-items: center; margin-top: 30px; }
+
+  @media (max-width: 768px) {
+    .form-row { flex-direction: column; gap: 0; }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Addresses",
+  "settings": []
+}
+{% endschema %}
