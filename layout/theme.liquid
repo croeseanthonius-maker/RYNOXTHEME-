@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="{{ request.locale.iso_code }}">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ page_title }}</title>
+    <meta name="description" content="{{ page_description | escape }}">
+    
+    {% if settings.favicon != blank %}
+      <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 32, height: 32 }}">
+    {% endif %}
+
+    {% render 'css-variables' %}
+
+    <style>
+      {{ settings.type_heading_font | font_face: font_display: 'swap' }}
+      {{ settings.type_body_font | font_face: font_display: 'swap' }}
+
+      :root {
+        --font-heading-family: {{ settings.type_heading_font.family }}, {{ settings.type_heading_font.fallback_families }};
+        --font-heading-weight: {{ settings.type_heading_font.weight }};
+        
+        --font-body-family: {{ settings.type_body_font.family }}, {{ settings.type_body_font.fallback_families }};
+        --font-body-weight: {{ settings.type_body_font.weight }};
+      }
+
+      .skip-to-content-link:not(:focus) {
+        border: 0;
+        clip: rect(0 0 0 0);
+        height: 1px;
+        margin: -1px;
+        overflow: hidden;
+        padding: 0;
+        position: absolute;
+        width: 1px;
+      }
+      .skip-to-content-link:focus {
+        padding: 1rem;
+        position: absolute;
+        z-index: 9999;
+        background-color: var(--color-background);
+        color: var(--color-foreground);
+      }
+    </style>
+
+    <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
+
+    {{ 'critical.css' | asset_url | stylesheet_tag: preload: true }}
+    {{ 'glass-button.css' | asset_url | stylesheet_tag }}
+
+    {% render 'meta-tags' %}
+    {{ content_for_header }}
+
+    {% if template == 'index' %}
+      <style>
+        body {
+          background-color: {{ settings.home_bg_color }} !important;
+          {% if settings.home_bg_image %}
+            background-image: url('{{ settings.home_bg_image | image_url }}') !important;
+            background-size: cover !important;
+            background-attachment: fixed !important;
+          {% endif %}
+        }
+        .gradient, #MainContent, .shopify-section {
+          background: transparent !important;
+        }
+      </style>
+    {% endif %}
+
+    <style>
+      .cart-notification {
+        position: fixed;
+        top: -100px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        width: 90%;
+        max-width: 500px;
+        padding: 15px 25px;
+        background: rgba(255, 255, 255, 0.45);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        border: 1px solid rgba(255, 255, 255, 0.6);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        border-radius: 1.5rem;
+        transition: top 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        visibility: hidden;
+      }
+      .cart-notification.show {
+        top: 20px;
+        visibility: visible;
+      }
+      .notification-content { display: flex; align-items: center; gap: 10px; font-weight: 600; color: #111; }
+      .notification-content p { margin: 0; }
+      
+      .success-icon {
+        background: #27ae60;
+        color: white;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+      }
+      .btn-view-cart {
+        background: #000;
+        color: #fff;
+        padding: 8px 16px;
+        border-radius: 50px;
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 600;
+        transition: background 0.3s;
+      }
+      .btn-view-cart:hover { background: #333; color: #fff; text-decoration: none; }
+      .close-btn { background: transparent; border: none; font-size: 1.2rem; cursor: pointer; color: #555; padding: 0; outline: none; }
+    </style>
+
+    {% if template.name == 'product' or template.name == 'cart' or template.name == 'collection' or template.name == 'list-collections' or template.name == 'search' %}
+    <style>
+      body {
+        {% if template.name == 'product' %}
+          background-color: {{ settings.global_product_bg_color }} !important;
+          {% if settings.global_product_bg_image != blank %}
+            background-image: url('{{ settings.global_product_bg_image | image_url: width: 2000 }}') !important;
+          {% endif %}
+        {% elsif template.name == 'cart' %}
+          background-color: {{ settings.global_cart_bg_color }} !important;
+          {% if settings.global_cart_bg_image != blank %}
+            background-image: url('{{ settings.global_cart_bg_image | image_url: width: 2000 }}') !important;
+          {% endif %}
+        {% elsif template.name == 'collection' %}
+          background-color: {{ settings.global_collection_bg_color }} !important;
+          {% if settings.global_collection_bg_image != blank %}
+            background-image: url('{{ settings.global_collection_bg_image | image_url: width: 2000 }}') !important;
+          {% endif %}
+        {% elsif template.name == 'list-collections' %}
+          background-color: {{ settings.global_list_collections_bg_color }} !important;
+          {% if settings.global_list_collections_bg_image != blank %}
+            background-image: url('{{ settings.global_list_collections_bg_image | image_url: width: 2000 }}') !important;
+          {% endif %}
+        {% elsif template.name == 'search' %}
+          background-color: {{ settings.global_search_bg_color }} !important;
+          {% if settings.global_search_bg_image != blank %}
+            background-image: url('{{ settings.global_search_bg_image | image_url: width: 2000 }}') !important;
+          {% endif %}
+        {% endif %}
+
+        {% if settings.global_product_bg_image != blank or settings.global_cart_bg_image != blank or settings.global_collection_bg_image != blank or settings.global_list_collections_bg_image != blank or settings.global_search_bg_image != blank %}
+          background-size: cover !important;
+          background-position: center top !important;
+          background-attachment: fixed !important;
+          background-repeat: no-repeat !important;
+        {% endif %}
+      }
+      #MainContent, .main-content {
+        background: transparent !important;
+      }
+    </style>
+    {% endif %}
+  </head>
+
+  <body>
+    <a class="skip-to-content-link" href="#MainContent">Skip to content</a>
+
+    {% section 'announcement-bar' %}
+    {% sections 'header-group' %}
+
+    <main id="MainContent" class="main-content" style="padding: 0; margin: 0;" tabindex="-1">
+      {{ content_for_layout }}
+      {% sections 'footer-group' %}
+    </main>
+
+    <div id="CartNotification" class="cart-notification">
+      <div class="notification-content">
+        <span class="success-icon">✓</span>
+        <p>Product added to cart!</p>
+      </div>
+      <a href="{{ routes.cart_url }}" class="btn-view-cart">View cart</a>
+      <button id="CloseNotification" class="close-btn">✕</button>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const notification = document.getElementById('CartNotification');
+      const closeNotifBtn = document.getElementById('CloseNotification');
+
+      function showNotification(message, isError = false) {
+        if (!notification) return;
+
+        const notifText = notification.querySelector('p');
+        const notifIcon = notification.querySelector('.success-icon');
+
+        notifText.textContent = message;
+        if (isError) {
+          notifIcon.textContent = '✕';
+        } else {
+          notifIcon.textContent = '✓';
+        }
+
+        notification.classList.add('show');
+        setTimeout(() => {
+          notification.classList.remove('show');
+        }, 5000);
+      }
+
+      function updateCartCount() {
+        fetch(window.Shopify.routes.root + 'cart.js')
+          .then(res => res.json())
+          .then(cart => {
+            const cartCounters = document.querySelectorAll('.cart-count-bubble, .cart-count, [data-cart-count], .cart-icon-count, .mainNav__cart-count');
+            cartCounters.forEach(counter => {
+              counter.textContent = cart.item_count;
+              if (cart.item_count > 0) {
+                counter.classList.remove('hidden', 'd-none');
+              }
+            });
+          })
+          .catch(e => console.error(e));
+      }
+
+      const addToCartForms = document.querySelectorAll('form[action$="/cart/add"]');
+      addToCartForms.forEach(form => {
+        form.addEventListener('submit', function(e) {
+          e.preventDefault();
+
+          const submitBtn = form.querySelector('button[type="submit"], input[type="submit"]');
+          if (!submitBtn) return;
+
+          const btnTextElement = submitBtn.querySelector('span');
+          const originalText = btnTextElement ? btnTextElement.innerText : (submitBtn.innerText || submitBtn.textContent);
+
+          if (btnTextElement) btnTextElement.innerText = 'ADDING...';
+          else submitBtn.innerText = 'ADDING...';
+          submitBtn.disabled = true;
+
+          const formData = new FormData(form);
+
+          fetch(window.Shopify.routes.root + 'cart/add.js', {
+            method: 'POST',
+            body: formData,
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+          })
+          .then(response => {
+            if (!response.ok) {
+              return response.json().then(errorData => {
+                throw new Error(errorData.description || 'There was an issue adding the item.');
+              });
+            }
+            return response.json();
+          })
+          .then(data => {
+            showNotification('Product added to cart!');
+            updateCartCount();
+          })
+          .catch((error) => {
+            showNotification(error.message, true);
+          })
+          .finally(() => {
+            if (btnTextElement) {
+              btnTextElement.innerText = originalText;
+            } else {
+              submitBtn.innerText = originalText;
+            }
+            submitBtn.disabled = false;
+          });
+        });
+      });
+
+      if (closeNotifBtn) {
+        closeNotifBtn.addEventListener('click', () => notification.classList.remove('show'));
+      }
+    });
+    </script>
+    
+    {% section 'newsletter-popup' %}
+  </body>
+</html>

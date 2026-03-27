@@ -1,0 +1,247 @@
+{%- if section.settings.show_popup -%}
+  <style>
+    /* --- L'arrière-plan sombre (Overlay) --- */
+    .newsletter-popup-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.4);
+      z-index: 99998;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.4s ease;
+      backdrop-filter: blur(5px);
+    }
+
+    /* --- Le bloc Popup en Verre (Glassmorphism) --- */
+    .newsletter-popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -40%);
+      z-index: 99999;
+      width: 90%;
+      max-width: 450px;
+      padding: 40px;
+      text-align: center;
+      
+      /* Effet Verre */
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      border-radius: 1.5rem;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+      
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    /* Classes actives pour l'animation d'apparition */
+    .newsletter-popup-overlay.show {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .newsletter-popup.show {
+      opacity: 1;
+      visibility: visible;
+      transform: translate(-50%, -50%);
+    }
+
+    /* --- Contenu du Popup --- */
+    .newsletter-popup .close-btn {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: transparent;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      color: #555;
+      line-height: 1;
+      padding: 5px;
+    }
+
+    .newsletter-popup h2 {
+      font-size: 24px;
+      margin-bottom: 10px;
+      color: #111;
+      font-family: 'Orbitron', sans-serif;
+    }
+
+    .newsletter-popup p {
+      font-size: 14px;
+      color: #555;
+      margin-bottom: 25px;
+      line-height: 1.5;
+    }
+
+    /* --- Le formulaire --- */
+    .newsletter-popup .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .newsletter-popup input[type="email"] {
+      width: 100%;
+      padding: 12px 15px;
+      border-radius: 50px;
+      border: 1px solid rgba(0,0,0,0.1);
+      background: rgba(255,255,255,0.8);
+      font-size: 14px;
+      outline: none;
+      text-align: center;
+    }
+
+    .newsletter-popup input[type="email"]:focus {
+      border-color: #111;
+    }
+
+    .newsletter-popup .btn-submit {
+      width: 100%;
+      background: #111;
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      padding: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .newsletter-popup .btn-submit:hover {
+      background: #333;
+    }
+
+    .newsletter-popup .success-msg {
+      color: #27ae60;
+      font-weight: 600;
+      margin-top: 15px;
+    }
+  </style>
+
+  <div id="NewsletterOverlay" class="newsletter-popup-overlay"></div>
+  
+  <div id="NewsletterPopup" class="newsletter-popup" data-delay="{{ section.settings.popup_delay }}">
+    <button id="CloseNewsletter" class="close-btn" aria-label="Close">✕</button>
+    
+    <h2>{{ section.settings.popup_heading }}</h2>
+    <p>{{ section.settings.popup_text }}</p>
+
+    {% form 'customer', id: 'NewsletterPopupForm' %}
+      <input type="hidden" name="contact[tags]" value="newsletter">
+      
+      {%- if form.posted_successfully? -%}
+        <p class="success-msg">{{ section.settings.success_message | default: 'Thank you! You have successfully subscribed.' }}</p>
+      {%- else -%}
+        <div class="input-group">
+          <input type="email" name="contact[email]" id="NewsletterEmail" value="{% if customer %}{{ customer.email }}{% endif %}" placeholder="{{ section.settings.email_placeholder | default: 'Enter your email address' }}" autocorrect="off" autocapitalize="off" required>
+          <button type="submit" class="btn-submit">{{ section.settings.button_text | default: 'Subscribe' }}</button>
+        </div>
+      {%- endif -%}
+    {% endform %}
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const popup = document.getElementById('NewsletterPopup');
+      const overlay = document.getElementById('NewsletterOverlay');
+      const closeBtn = document.getElementById('CloseNewsletter');
+      
+      if (!popup || !overlay) return;
+
+      // Vérifie si le client a déjà fermé le popup
+      const hasSeenPopup = localStorage.getItem('rynox_newsletter_closed');
+      
+      // Si le formulaire vient d'être soumis avec succès, on laisse ouvert pour montrer le message, puis on ferme
+      const isSuccess = popup.querySelector('.success-msg');
+      if (isSuccess) {
+        popup.classList.add('show');
+        overlay.classList.add('show');
+        localStorage.setItem('rynox_newsletter_closed', 'true');
+        setTimeout(() => { closePopup(); }, 3000);
+        return;
+      }
+
+      if (!hasSeenPopup) {
+        const delayInSeconds = parseInt(popup.dataset.delay) * 1000;
+        
+        // Fait apparaître le popup après X secondes
+        setTimeout(() => {
+          popup.classList.add('show');
+          overlay.classList.add('show');
+        }, delayInSeconds);
+      }
+
+      function closePopup() {
+        popup.classList.remove('show');
+        overlay.classList.remove('show');
+        // On enregistre qu'il l'a vu pour ne plus l'embêter
+        localStorage.setItem('rynox_newsletter_closed', 'true');
+      }
+
+      closeBtn.addEventListener('click', closePopup);
+      overlay.addEventListener('click', closePopup); // Ferme si on clique à côté
+    });
+  </script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Newsletter Popup",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_popup",
+      "label": "Enable popup",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "popup_delay",
+      "min": 2,
+      "max": 30,
+      "step": 1,
+      "unit": "sec",
+      "label": "Popup delay",
+      "default": 5
+    },
+    {
+      "type": "text",
+      "id": "popup_heading",
+      "label": "Heading",
+      "default": "Join the Snowpeak Team"
+    },
+    {
+      "type": "textarea",
+      "id": "popup_text",
+      "label": "Text",
+      "default": "Sign up to receive exclusive offers and 10% off your first order."
+    },
+    {
+      "type": "text",
+      "id": "email_placeholder",
+      "label": "Email Placeholder Text",
+      "default": "Enter your email address"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button Text",
+      "default": "Subscribe"
+    },
+    {
+      "type": "text",
+      "id": "success_message",
+      "label": "Success Message",
+      "default": "Thank you! You have successfully subscribed."
+    }
+  ]
+}
+{% endschema %}

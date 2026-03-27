@@ -1,0 +1,40 @@
+{% style %}
+  {{ settings.type_heading_font | font_face: font_display: 'swap' }}
+  {{ settings.type_body_font | font_face: font_display: 'swap' }}
+
+  :root {
+    --font-heading-family: {{ settings.type_heading_font.family }}, {{ settings.type_heading_font.fallback_families }};
+    --font-heading-weight: {{ settings.type_heading_font.weight }};
+    
+    --font-body-family: {{ settings.type_body_font.family }}, {{ settings.type_body_font.fallback_families }};
+    --font-body-weight: {{ settings.type_body_font.weight }};
+
+    --page-width: {{ settings.max_page_width | default: '90rem' }};
+    --page-margin: {{ settings.min_page_margin | default: 20 }}px;
+
+    --color-background: {{ settings.background | default: '#ffffff' }};
+    --color-foreground: {{ settings.foreground | default: '#121212' }};
+    --color-primary-accent: {{ settings.primary_accent | default: '#334FB4' }};
+    --color-secondary-accent: {{ settings.secondary_accent | default: '#F2F2F2' }};
+
+    --color-card-bg: {{ settings.color_card_bg | default: '#ffffff' }};
+    --color-button-bg: {{ settings.color_button_bg | default: '#18181b' }};
+    --color-button-text: {{ settings.color_button_text | default: '#ffffff' }};
+    --color-button-bg-hover: {{ settings.color_button_bg_hover | default: '#3f3f46' }};
+    --color-badge-bg: {{ settings.color_badge_bg | default: '#a90329' }};
+    --color-badge-text: {{ settings.color_badge_text | default: '#ffffff' }};
+    
+    --style-border-radius-inputs: 8px;
+  }
+
+  .visually-hidden {
+    position: absolute !important;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    width: 1px;
+    margin: -1px;
+    padding: 0;
+    border: 0;
+  }
+{% endstyle %}

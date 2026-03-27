@@ -1,0 +1,180 @@
+<style>
+  .glass-search-container {
+    position: relative;
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  .glass-search-input {
+    width: 100%;
+    padding: 12px 20px;
+    border-radius: 50px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    background: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(10px);
+    font-size: 14px;
+    outline: none;
+    transition: all 0.3s ease;
+    color: var(--color-foreground);
+  }
+
+  .glass-search-input:focus {
+    background: rgba(255, 255, 255, 0.8);
+    border-color: var(--color-primary-accent);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+  }
+
+  .glass-search-results {
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 0;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: 1.5rem;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    z-index: 100;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    transform: translateY(-10px);
+  }
+
+  .glass-search-results.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  .glass-search-item {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    text-decoration: none;
+    color: var(--color-foreground);
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    transition: background 0.2s;
+  }
+
+  .glass-search-item:last-child {
+    border-bottom: none;
+  }
+
+  .glass-search-item:hover {
+    background: rgba(255,255,255,0.9);
+  }
+
+  .glass-search-img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-right: 15px;
+    background: var(--color-secondary-accent);
+  }
+
+  .glass-search-info {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .glass-search-title {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .glass-search-price {
+    font-size: 12px;
+    opacity: 0.8;
+  }
+
+  .glass-search-empty {
+    padding: 20px;
+    text-align: center;
+    font-size: 13px;
+    opacity: 0.8;
+  }
+</style>
+
+<div class="glass-search-container">
+  <form action="{{ routes.search_url }}" method="get" role="search">
+    <label for="GlassSearchInput" class="visually-hidden">{{ 'general.search.search' | t | default: 'Search' }}</label>
+    <input type="hidden" name="type" value="product">
+    <input 
+      type="search" 
+      name="q" 
+      class="glass-search-input" 
+      placeholder="Search for a product..." 
+      autocomplete="off"
+      id="GlassSearchInput"
+    >
+  </form>
+  
+  <div class="glass-search-results" id="GlassSearchResults"></div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('GlassSearchInput');
+    const resultsContainer = document.getElementById('GlassSearchResults');
+    let debounceTimer;
+
+    if (!searchInput || !resultsContainer) return;
+
+    searchInput.addEventListener('input', function() {
+      clearTimeout(debounceTimer);
+      const query = this.value.trim();
+
+      if (query.length < 2) {
+        resultsContainer.classList.remove('active');
+        return;
+      }
+
+      debounceTimer = setTimeout(() => {
+        fetch(`${window.Shopify.routes.root}search/suggest.json?q=${encodeURIComponent(query)}&resources[type]=product&resources[limit]=4`)
+          .then(response => response.json())
+          .then(data => {
+            const products = data.resources.results.products;
+            resultsContainer.innerHTML = '';
+
+            if (products.length === 0) {
+              resultsContainer.innerHTML = '<div class="glass-search-empty">No products found.</div>';
+            } else {
+              products.forEach(product => {
+                const price = (product.price !== undefined) ? product.price : '';
+                const html = `
+                  <a href="${product.url}" class="glass-search-item">
+                    ${product.image ? `<img src="${product.image}" alt="${product.title}" class="glass-search-img">` : '<div class="glass-search-img"></div>'}
+                    <div class="glass-search-info">
+                      <span class="glass-search-title">${product.title}</span>
+                      <span class="glass-search-price">${price}</span>
+                    </div>
+                  </a>
+                `;
+                resultsContainer.insertAdjacentHTML('beforeend', html);
+              });
+            }
+            resultsContainer.classList.add('active');
+          })
+          .catch(error => console.error(error));
+      }, 300); 
+    });
+
+    document.addEventListener('click', function(e) {
+      if (!searchInput.contains(e.target) && !resultsContainer.contains(e.target)) {
+        resultsContainer.classList.remove('active');
+      }
+    });
+    
+    searchInput.addEventListener('focus', function() {
+      if (this.value.trim().length >= 2 && resultsContainer.innerHTML !== '') {
+        resultsContainer.classList.add('active');
+      }
+    });
+  });
+</script>

@@ -1,0 +1,103 @@
+<section class="snowpeak-404-page">
+  <div class="page-width">
+    <div class="glass-404-panel">
+      <h1 class="error-code">404</h1>
+      <h2 class="error-title">Page Not Found</h2>
+      <p class="error-text">
+        Oops! It looks like you went off-piste. The page you are looking for has melted away or doesn't exist.
+      </p>
+      <a href="{{ routes.all_products_collection_url }}" class="btn-primary-glass">
+        Return to Catalog
+      </a>
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .snowpeak-404-page {
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
+    padding: 120px 20px;
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+  }
+
+  .glass-404-panel {
+    background: rgba(255, 255, 255, 0.45);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    border-radius: 2rem;
+    padding: 60px 40px;
+    text-align: center;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .error-code {
+    font-size: 8rem;
+    font-weight: 900;
+    color: #111;
+    margin: 0;
+    line-height: 1;
+    letter-spacing: -4px;
+    text-shadow: 4px 4px 10px rgba(0,0,0,0.1);
+  }
+
+  .error-title {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #111;
+    margin: 10px 0 20px 0;
+    text-transform: uppercase;
+  }
+
+  .error-text {
+    font-size: 1.1rem;
+    color: #444;
+    margin-bottom: 40px;
+    line-height: 1.6;
+    font-weight: 500;
+  }
+
+  .btn-primary-glass {
+    display: inline-block;
+    padding: 16px 40px;
+    background: #111;
+    color: #fff;
+    font-weight: 700;
+    border-radius: 50px;
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+  }
+
+  .btn-primary-glass:hover {
+    background: #333;
+    transform: translateY(-3px);
+    box-shadow: 0 15px 25px rgba(0,0,0,0.2);
+  }
+
+  @media (max-width: 768px) {
+    .glass-404-panel { padding: 40px 20px; }
+    .error-code { font-size: 6rem; }
+    .error-title { font-size: 1.5rem; }
+    .error-text { font-size: 1rem; }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "404 Page",
+  "settings": []
+}
+{% endschema %}

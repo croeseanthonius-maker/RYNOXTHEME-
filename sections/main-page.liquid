@@ -1,0 +1,119 @@
+{%- style -%}
+  #shopify-section-{{ section.id }} .snowpeak-standard-page {
+    {% if section.settings.bg_image != blank %}
+      background-image: url('{{ section.settings.bg_image | image_url: width: 2000 }}');
+    {% else %}
+      background-color: {{ section.settings.bg_color | default: '#e2e8f0' }};
+    {% endif %}
+  }
+{%- endstyle -%}
+
+<section class="snowpeak-standard-page">
+  <div class="page-width">
+    <div class="glass-page-panel">
+      <h1 class="page-title">{{ page.title }}</h1>
+      
+      <div class="page-content rte">
+        {{ page.content }}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .snowpeak-standard-page {
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
+    padding: 120px 20px 60px 20px;
+    min-height: 80vh;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+  }
+
+  .page-width {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .glass-page-panel {
+    background: rgba(255, 255, 255, 0.65);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    border-radius: 1.5rem;
+    padding: 50px 60px;
+  }
+
+  .page-title {
+    font-size: 3rem;
+    font-weight: 800;
+    color: #111;
+    margin-bottom: 30px;
+    text-align: center;
+    letter-spacing: -1px;
+    text-transform: uppercase;
+  }
+
+  .page-content.rte {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #333;
+  }
+
+  .page-content.rte p {
+    margin-bottom: 20px;
+  }
+
+  .page-content.rte h2, 
+  .page-content.rte h3 {
+    margin-top: 40px;
+    margin-bottom: 15px;
+    color: #111;
+    font-weight: 700;
+  }
+
+  .page-content.rte img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 12px;
+    margin: 20px 0;
+  }
+
+  @media (max-width: 768px) {
+    .snowpeak-standard-page {
+      padding: 100px 15px 40px 15px;
+    }
+    .glass-page-panel {
+      padding: 30px 20px;
+    }
+    .page-title {
+      font-size: 2.2rem;
+    }
+    .page-content.rte {
+      font-size: 1rem;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Page Content",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "bg_image",
+      "label": "Background Image"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Fallback Background Color",
+      "default": "#e2e8f0"
+    }
+  ]
+}
+{% endschema %}

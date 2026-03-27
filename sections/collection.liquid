@@ -1,0 +1,129 @@
+<section class="collection-section">
+  <div class="collection-section__container">
+    <div class="collection-section__header">
+      <h1 class="collection-section__title">{{ collection.title }}</h1>
+      {% if collection.description %}
+        <p class="collection-section__description">{{ collection.description }}</p>
+      {% endif %}
+    </div>
+
+    <form class="glass-filters-form" id="CollectionFiltersForm">
+      <div class="glass-filters-wrapper">
+        <div class="filters-group">
+          {%- for filter in collection.filters -%}
+            <div class="glass-dropdown filter" tabindex="0">
+              <div class="glass-dropdown-toggle">
+                <span>{{ filter.label }}</span>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+              </div>
+              <div class="glass-dropdown-menu">
+                {%- case filter.type -%}
+                  {%- when 'boolean', 'list' -%}
+                    <ul class="filter-list">
+                      {%- for value in filter.values -%}
+                        <li>
+                          <label class="filter-label {% if value.count == 0 and value.active == false %}disabled{% endif %}">
+                            <input type="checkbox" name="{{ value.param_name }}" value="{{ value.value }}" {% if value.active %}checked{% endif %} {% if value.count == 0 and value.active == false %}disabled{% endif %} onchange="this.form.submit()">
+                            <span>{{ value.label }} ({{ value.count }})</span>
+                          </label>
+                        </li>
+                      {%- endfor -%}
+                    </ul>
+                  {%- when 'price_range' -%}
+                    <div class="filter-price">
+                      <input name="{{ filter.min_value.param_name }}" type="number" placeholder="0" min="0" max="{{ filter.range_max | money_without_currency | replace: ',', '' }}" onchange="this.form.submit()">
+                      <span>-</span>
+                      <input name="{{ filter.max_value.param_name }}" type="number" placeholder="{{ filter.range_max | money_without_currency | replace: ',', '' }}" min="0" max="{{ filter.range_max | money_without_currency | replace: ',', '' }}" onchange="this.form.submit()">
+                    </div>
+                {%- endcase -%}
+              </div>
+            </div>
+          {%- endfor -%}
+        </div>
+
+        <div class="sort-group">
+          {% assign sort_by = collection.sort_by | default: collection.default_sort_by %}
+          <input type="hidden" name="sort_by" id="SortByHidden" value="{{ sort_by }}">
+          
+          <div class="glass-dropdown sort" tabindex="0">
+            <div class="glass-dropdown-toggle">
+              <span id="CurrentSortLabel">
+                {%- for option in collection.sort_options -%}
+                  {%- if option.value == sort_by -%}{{ option.name }}{%- break -%}{%- endif -%}
+                {%- endfor -%}
+              </span>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+            </div>
+            <div class="glass-dropdown-menu">
+              <ul class="glass-dropdown-list">
+                {%- for option in collection.sort_options -%}
+                  <li>
+                    <button type="button" class="glass-dropdown-item {% if option.value == sort_by %}active{% endif %}" {% if option.value != sort_by %}onclick="document.getElementById('SortByHidden').value='{{ option.value }}'; document.getElementById('CollectionFiltersForm').submit();"{% endif %}>
+                      {{ option.name }}
+                    </button>
+                  </li>
+                {%- endfor -%}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <div class="collection-section__grid">
+      {% paginate collection.products by 20 %}
+        {% for product in collection.products %}
+          {% render 'product-card', product: product %}
+        {% endfor %}
+
+        {{ paginate | default_pagination }}
+      {% endpaginate %}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .collection-section { width: 100vw; margin-left: calc(-50vw + 50%); padding: 60px 20px; background-attachment: fixed; background-repeat: no-repeat; background-size: cover; background-position: center; }
+  .collection-section__container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 40px; box-sizing: border-box; }
+  .collection-section__header { text-align: center; max-width: 700px; margin: 0 auto 40px; }
+  .collection-section__title { font-size: 36px; font-weight: 700; color: #1f2937; margin: 0 0 20px 0; letter-spacing: -1px; font-family: montserrat, sans-serif; text-transform: uppercase; }
+  .collection-section__description { font-size: 18px; color: #4b5563; margin: 0; line-height: 1.6; font-family: inter, sans-serif; }
+
+  .glass-filters-form { margin-bottom: 40px; position: relative; z-index: 999; }
+  .glass-filters-wrapper { display: flex; justify-content: flex-end; align-items: center; flex-wrap: wrap; gap: 20px; position: relative; z-index: 999; overflow: visible !important; }
+  .filters-group { display: flex; gap: 15px; flex-wrap: wrap; margin-right: auto; }
+  
+  .glass-dropdown { position: relative; display: inline-block; outline: none; }
+  .glass-dropdown-toggle { display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: 600; color: #111; padding: 10px 20px; background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 50px; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); font-size: 14px; }
+  .glass-dropdown:hover .glass-dropdown-toggle, .glass-dropdown:focus-within .glass-dropdown-toggle { background: rgba(255, 255, 255, 0.3); transform: translateY(-2px); }
+  
+  .glass-dropdown-menu { position: absolute; top: calc(100% + 10px); right: 0; min-width: 220px; background: rgba(255, 255, 255, 0.15) !important; backdrop-filter: blur(16px) !important; -webkit-backdrop-filter: blur(16px) !important; border: 1px solid rgba(255, 255, 255, 0.3) !important; border-radius: 12px; padding: 12px 0; box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.18) !important; z-index: 9999; opacity: 0; visibility: hidden; pointer-events: none; transform: translateY(-10px); transition: all 0.3s ease; }
+  .glass-dropdown.filter .glass-dropdown-menu { right: auto; left: 0; padding: 20px; min-width: 280px; }
+  .glass-dropdown:hover .glass-dropdown-menu, .glass-dropdown:focus-within .glass-dropdown-menu { opacity: 1; visibility: visible; pointer-events: auto; transform: translateY(0); }
+
+  .glass-dropdown-list { margin: 0; padding: 0; list-style: none; }
+  .glass-dropdown-item { display: block; width: 100%; text-align: left; background: transparent; border: none; padding: 10px 24px; color: #111; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; }
+  .glass-dropdown-item:hover { background: rgba(0, 0, 0, 0.05); color: #000; padding-left: 28px; }
+  
+  /* L'élément actuellement sélectionné devient non-cliquable */
+  .glass-dropdown-item.active { background: rgba(0, 0, 0, 0.1); color: #000; padding-left: 28px; cursor: default; pointer-events: none; }
+
+  .filter-list { list-style: none; padding: 0; margin: 0; }
+  .filter-label { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; cursor: pointer; font-size: 14px; color: #111; font-weight: 500; }
+  .filter-label.disabled { opacity: 0.5; cursor: not-allowed; }
+  .filter-price { display: flex; align-items: center; gap: 10px; }
+  .filter-price input { width: 80px; padding: 8px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.1); background: rgba(255,255,255,0.8); outline: none; }
+
+  .collection-section__grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 32px; width: 100%; position: relative; z-index: 1; }
+
+  @media (max-width: 1024px) { .collection-section__grid { grid-template-columns: repeat(3, 1fr); gap: 24px; } }
+  @media (max-width: 768px) { .collection-section__grid { grid-template-columns: repeat(2, 1fr); gap: 20px; } .collection-section { padding: 40px 20px; } .collection-section__container { padding: 0 20px; } .collection-section__title { font-size: 28px; } }
+  @media (max-width: 480px) { .collection-section__grid { grid-template-columns: 1fr; gap: 20px; } .collection-section { padding: 30px 15px; } .collection-section__container { padding: 0 15px; } .collection-section__title { font-size: 24px; } .glass-filters-wrapper { flex-direction: column; align-items: flex-end; } .glass-dropdown-menu { right: 0; width: 100%; min-width: 100%; } .sort-group, .glass-dropdown { width: 100%; } .glass-dropdown-toggle { justify-content: space-between; } }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Collection Grid",
+  "settings": []
+}
+{% endschema %}

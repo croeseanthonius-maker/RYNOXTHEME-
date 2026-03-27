@@ -1,0 +1,329 @@
+<section class="embla">
+  {% if section.settings.show_title %}
+    <div class="embla__title">
+      <h2>{{ section.settings.carousel_title }}</h2>
+      {% if section.settings.carousel_subtitle != blank %}
+        <p>{{ section.settings.carousel_subtitle }}</p>
+      {% endif %}
+    </div>
+  {% endif %}
+
+  <div class="embla__viewport">
+    <div class="embla__container">
+      
+      {%- liquid
+        assign max_products = section.settings.max_products
+        assign rendered_count = 0
+        assign only_on_sale = section.settings.only_on_sale
+      -%}
+
+      {%- comment -%} LOGIQUE 1 : SI DES COLLECTIONS SONT SÉLECTIONNÉES {%- endcomment -%}
+      {%- if section.settings.collection_list != blank -%}
+        
+        {%- for collection in section.settings.collection_list -%}
+          {%- for product in collection.products -%}
+            
+            {%- if rendered_count >= max_products -%}{%- break -%}{%- endif -%}
+
+            {%- assign is_on_sale = false -%}
+            {%- if product.compare_at_price > product.price -%}
+              {%- assign is_on_sale = true -%}
+            {%- endif -%}
+
+            {%- if only_on_sale and is_on_sale == false -%}
+              {%- continue -%}
+            {%- endif -%}
+
+            <div class="embla__slide">
+              {% render 'product-card', product: product %}
+            </div>
+            {%- assign rendered_count = rendered_count | plus: 1 -%}
+            
+          {%- endfor -%}
+          {%- if rendered_count >= max_products -%}{%- break -%}{%- endif -%}
+        {%- endfor -%}
+
+      {%- comment -%} LOGIQUE 2 : SI AUCUNE COLLECTION, ON UTILISE LES BLOCS MANUELS {%- endcomment -%}
+      {%- elsif section.blocks.size > 0 -%}
+        
+        {%- for block in section.blocks -%}
+          {%- if block.settings.product != blank -%}
+            {%- assign product = block.settings.product -%}
+            
+            {%- assign is_on_sale = false -%}
+            {%- if product.compare_at_price > product.price -%}
+              {%- assign is_on_sale = true -%}
+            {%- endif -%}
+
+            {%- if only_on_sale and is_on_sale == false -%}
+              {%- continue -%}
+            {%- endif -%}
+
+            <div class="embla__slide">
+              {% render 'product-card', product: product %}
+            </div>
+            {%- assign rendered_count = rendered_count | plus: 1 -%}
+          {%- endif -%}
+        {%- endfor -%}
+        
+      {%- endif -%}
+
+      {%- comment -%} SI AUCUN PRODUIT NE CORRESPOND (OU VIDE) {%- endcomment -%}
+      {%- if rendered_count == 0 -%}
+        <div class="embla__slide">
+          <div style="text-align: center; padding: 50px; background: rgba(255,255,255,0.4); backdrop-filter: blur(10px); border-radius: 1.5rem; border: 1px solid rgba(255,255,255,0.6);">
+            <p style="color: #111; font-weight: 600; margin: 0;">No products to display.</p>
+          </div>
+        </div>
+      {%- endif -%}
+
+    </div>
+  </div>
+
+  <div class="embla__controls">
+    <button class="embla__button embla__button--prev" aria-label="Previous slide">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="15 18 9 12 15 6"></polyline>
+      </svg>
+    </button>
+    <button class="embla__button embla__button--next" aria-label="Next slide">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="9 18 15 12 9 6"></polyline>
+      </svg>
+    </button>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const viewport = document.querySelector('.embla__viewport');
+      const prevBtn = document.querySelector('.embla__button--prev');
+      const nextBtn = document.querySelector('.embla__button--next');
+
+      if (!viewport || !prevBtn || !nextBtn) return;
+
+      // Met à jour l'état des boutons selon la position du scroll
+      function updateButtons() {
+        // scrollLeft indique où on est. On utilise Math.ceil pour éviter les bugs de pixels décimaux
+        prevBtn.disabled = viewport.scrollLeft <= 0;
+        nextBtn.disabled = Math.ceil(viewport.scrollLeft + viewport.clientWidth) >= viewport.scrollWidth;
+      }
+
+      // Quand on clique sur PRÉCÉDENT
+      prevBtn.addEventListener('click', function() {
+        const scrollAmount = viewport.clientWidth * 0.8; // On scrolle de 80% de l'écran
+        viewport.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+      });
+
+      // Quand on clique sur SUIVANT
+      nextBtn.addEventListener('click', function() {
+        const scrollAmount = viewport.clientWidth * 0.8;
+        viewport.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+      });
+
+      // On écoute le défilement (doigt ou bouton) pour griser les flèches si on est aux extrémités
+      viewport.addEventListener('scroll', updateButtons, { passive: true });
+      window.addEventListener('resize', updateButtons);
+      
+      // Initialisation
+      updateButtons();
+    });
+  </script>
+</section>
+
+{% stylesheet %}
+  .embla {
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
+    padding: 40px 0; /* Padding horizontal retiré pour que les cartes débordent de l'écran joliment */
+    --slide-size: 85%; /* Sur mobile, la carte prend 85% de l'écran, ce qui laisse entrevoir la suivante */
+  }
+
+  .embla__viewport {
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory; /* Le secret d'un scroll parfait */
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* Cache la barre sur Firefox */
+    -ms-overflow-style: none; /* Cache la barre sur IE/Edge */
+    padding: 0 20px; /* On remet le padding ici à l'intérieur du conteneur de défilement */
+  }
+
+  .embla__viewport::-webkit-scrollbar {
+    display: none; /* Cache la barre sur Chrome/Safari */
+  }
+
+  .embla__container {
+    display: flex;
+    gap: 20px;
+    padding-bottom: 20px; /* Pour l'ombre des cartes */
+  }
+
+  .embla__slide {
+    flex: 0 0 var(--slide-size);
+    min-width: 0;
+    scroll-snap-align: center; /* Aimante la carte au centre de l'écran sur mobile */
+  }
+
+  .embla__title {
+    text-align: center;
+    margin-bottom: 40px;
+    padding: 0 20px;
+  }
+
+  .embla__title h2 {
+    margin: 0 0 10px 0;
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--color-heading-text, #18181B);
+    letter-spacing: -1px;
+  }
+
+  .embla__title p {
+    margin: 0;
+    font-size: 16px;
+    color: var(--color-body-text, #52525B);
+    line-height: 1.6;
+  }
+
+  .embla__controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+    margin-top: 10px;
+  }
+
+  .embla__button {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-appearance: none;
+    appearance: none;
+    background-color: transparent;
+    touch-action: manipulation;
+    cursor: pointer;
+    border: 2px solid var(--color-button-bg, #333);
+    padding: 0;
+    margin: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    color: var(--color-button-bg, #333);
+    transition: all 0.3s ease;
+  }
+
+  .embla__button:hover:not(:disabled) {
+    background-color: var(--color-button-bg, #333);
+    color: var(--color-button-text, #fff);
+  }
+
+  .embla__button:disabled {
+    opacity: 0.2;
+    cursor: not-allowed;
+    border-color: #999;
+    color: #999;
+  }
+
+  @media (max-width: 768px) {
+    .embla { padding: 30px 0; }
+    .embla__title h2 { font-size: 24px; }
+    .embla__title p { font-size: 14px; }
+    .embla__controls { gap: 20px; }
+    .embla__button { width: 40px; height: 40px; }
+  }
+
+  /* Breakpoints pour adapter le nombre de cartes affichées à l'écran */
+  @media (min-width: 768px) {
+    .embla { --slide-size: calc(50% - 10px); }
+    .embla__slide { scroll-snap-align: start; } /* Sur grand écran, on aligne à gauche */
+  }
+
+  @media (min-width: 1024px) {
+    .embla { --slide-size: calc(33.333% - 13.33px); }
+  }
+
+  @media (min-width: 1280px) {
+    .embla { --slide-size: calc(25% - 15px); }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Carousel",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Titles"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_title",
+      "label": "Show title",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "carousel_title",
+      "label": "Carousel title",
+      "default": "Special Promotion"
+    },
+    {
+      "type": "text",
+      "id": "carousel_subtitle",
+      "label": "Carousel subtitle",
+      "default": "Discover our amazing deals on selected items"
+    },
+    {
+      "type": "header",
+      "content": "Data source",
+      "info": "Select collections to populate the carousel automatically. If left empty, manual blocks will be used."
+    },
+    {
+      "type": "collection_list",
+      "id": "collection_list",
+      "label": "Collections to display"
+    },
+    {
+      "type": "checkbox",
+      "id": "only_on_sale",
+      "label": "Only show products on sale",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "max_products",
+      "min": 4,
+      "max": 20,
+      "step": 1,
+      "label": "Maximum products to show",
+      "default": 8
+    }
+  ],
+  "blocks": [
+    {
+      "type": "product",
+      "name": "Manual product",
+      "settings": [
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Product"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Carousel",
+      "blocks": [
+        { "type": "product" },
+        { "type": "product" },
+        { "type": "product" },
+        { "type": "product" }
+      ]
+    }
+  ]
+}
+{% endschema %}

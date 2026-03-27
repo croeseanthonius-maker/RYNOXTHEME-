@@ -1,0 +1,314 @@
+<div class="snowpeak-product-page">
+  <div class="page-width product-grid">
+    <div class="product-media-gallery">
+      {% assign current_variant = product.selected_or_first_available_variant %}
+      {% assign featured_media = current_variant.featured_media | default: product.featured_media %}
+      <div class="main-image-container glass-box">
+        {% if featured_media != blank %}
+          {% if featured_media.media_type == 'video' or featured_media.media_type == 'external_video' %}
+            {{ featured_media | media_tag: class: 'main-product-media', autoplay: true, loop: true, controls: true, id: 'MainMedia' }}
+          {% elsif featured_media.media_type == 'model' %}
+            {{ featured_media | model_viewer_tag: class: 'main-product-media', id: 'MainMedia' }}
+          {% else %}
+            <img src="{{ featured_media | image_url: width: 1000 }}" alt="{{ featured_media.alt | escape }}" class="main-product-media" id="MainMedia" width="{{ featured_media.width }}" height="{{ featured_media.height }}" loading="eager">
+          {% endif %}
+        {% else %}
+          {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg main-product-media' }}
+        {% endif %}
+      </div>
+      {% if product.media.size > 1 %}
+        <div class="thumbnails-container">
+          {% for media in product.media %}
+            <div class="thumbnail {% if media.id == featured_media.id %}active-thumb{% endif %}" data-media-id="{{ media.id }}" {% if media.media_type == 'image' %}data-image-src="{{ media | image_url: width: 1000 }}"{% endif %}>
+              <img src="{{ media.preview_image | image_url: width: 200 }}" alt="{{ media.alt | escape }}" width="{{ media.preview_image.width }}" height="{{ media.preview_image.height }}" loading="lazy">
+              {% if media.media_type == 'video' or media.media_type == 'external_video' %}
+                <span class="media-icon">▶</span>
+              {% elsif media.media_type == 'model' %}
+                <span class="media-icon">3D</span>
+              {% endif %}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="product-info-panel glass-box">
+      {%- for block in section.blocks -%}
+        {%- case block.type -%}
+          {%- when '@app' -%}
+            <div class="product-block-app" {{ block.shopify_attributes }}>{% render block %}</div>
+          {%- when 'custom_liquid' -%}
+            <div class="product-block-custom-liquid" {{ block.shopify_attributes }}>{{ block.settings.custom_liquid }}</div>
+          {%- when 'vendor' -%}
+            <p class="vendor" {{ block.shopify_attributes }}>{{ product.vendor }}</p>
+          {%- when 'title' -%}
+            <h1 class="product-title" {{ block.shopify_attributes }}>{{ product.title }}</h1>
+          {%- when 'price' -%}
+            <div class="price-block" {{ block.shopify_attributes }}>
+              <span class="current-price" id="ProductPrice">{{ current_variant.price | money }}</span>
+              <span class="compare-price" id="ComparePrice">
+                {% if current_variant.compare_at_price > current_variant.price %}<s>{{ current_variant.compare_at_price | money }}</s>{% endif %}
+              </span>
+              <div class="unit-price" id="UnitPrice" {% unless current_variant.unit_price_measurement %}style="display:none;"{% endunless %}>
+                {{ current_variant.unit_price | money }} / {% if current_variant.unit_price_measurement.reference_value != 1 %}{{ current_variant.unit_price_measurement.reference_value }}{% endif %}{{ current_variant.unit_price_measurement.reference_unit }}
+              </div>
+              {%- if cart.taxes_included -%}<div class="tax-note">Taxes included.</div>{%- endif -%}
+            </div>
+          {%- when 'description' -%}
+            <div class="product-description rte" {{ block.shopify_attributes }}>{{ product.description }}</div>
+          {%- when 'buy_buttons' -%}
+            <div class="product-buy-buttons" {{ block.shopify_attributes }}>
+              {% form 'product', product, id: 'AddToCartForm', class: 'product-form' %}
+                <input type="hidden" name="id" value="{{ current_variant.id }}" id="VariantIdHidden">
+
+                {% unless product.has_only_default_variant %}
+                  <div class="variant-selectors">
+                    {% for option in product.options_with_values %}
+                      {% assign downcase_option = option.name | downcase %}
+                      {% if downcase_option contains 'color' or downcase_option contains 'couleur' %}
+                        <div class="color-selector-wrapper">
+                          <label>{{ option.name }}</label>
+                          <div class="color-selector">
+                            {% for value in option.values %}
+                              {%- liquid
+                                assign bg_style = 'background-color: #ccc;'
+                                if value.swatch.image
+                                  assign image_url = value.swatch.image | image_url: width: 50
+                                  assign bg_style = 'background-image: url(' | append: image_url | append: '); background-size: cover; background-position: center;'
+                                elsif value.swatch.color
+                                  assign bg_style = 'background-color: rgb(' | append: value.swatch.color.rgb | append: ');'
+                                endif
+                              -%}
+                              <input type="radio" id="Option{{ option.position }}-{{ value | escape }}" name="options[{{ option.name | escape }}]" value="{{ value | escape }}" class="single-option-selector color-input hidden" data-index="option{{ option.position }}" {% if option.selected_value == value %}checked{% endif %}>
+                              <label for="Option{{ option.position }}-{{ value | escape }}" class="color-circle" style="{{ bg_style }}" title="{{ value }}"></label>
+                            {% endfor %}
+                          </div>
+                        </div>
+                      {% else %}
+                        <div class="selector-wrapper">
+                          <label for="Option{{ option.position }}">{{ option.name }}</label>
+                          <select id="Option{{ option.position }}" name="options[{{ option.name | escape }}]" class="single-option-selector glass-select" data-index="option{{ option.position }}">
+                            {% for value in option.values %}
+                              <option value="{{ value | escape }}" {% if option.selected_value == value %}selected="selected"{% endif %}>{{ value }}</option>
+                            {% endfor %}
+                          </select>
+                        </div>
+                      {% endif %}
+                    {% endfor %}
+                  </div>
+                {% endunless %}
+
+                {%- if product.gift_card? -%}
+                  <div class="recipient-form" style="margin-bottom: 20px;">
+                    <label style="display:flex; align-items:center; gap:8px; font-weight:600; cursor:pointer;">
+                      <input type="checkbox" name="properties[__shopify_send_gift_card_to_recipient]" id="Recipient-checkbox">
+                      Send as a gift
+                    </label>
+                    <div class="recipient-fields" style="display: none; margin-top: 15px; display:flex; flex-direction:column; gap:10px;">
+                      <input type="email" class="glass-select" name="properties[Recipient email]" placeholder="Recipient email" id="Recipient-email">
+                      <input type="text" class="glass-select" name="properties[Recipient name]" placeholder="Recipient name">
+                      <textarea class="glass-select" name="properties[Message]" placeholder="Message"></textarea>
+                      <input type="date" class="glass-select" name="properties[Send on]" placeholder="Send on date">
+                    </div>
+                  </div>
+                  <script>
+                    document.getElementById('Recipient-checkbox').addEventListener('change', function() {
+                      const fields = document.querySelector('.recipient-fields');
+                      const email = document.getElementById('Recipient-email');
+                      if(this.checked) { fields.style.display = 'flex'; email.setAttribute('required', 'required'); } 
+                      else { fields.style.display = 'none'; email.removeAttribute('required'); }
+                    });
+                  </script>
+                {%- endif -%}
+
+                {% if block.settings.show_quantity_selector %}
+                  <div class="quantity-wrapper">
+                    <label for="Quantity">Quantity</label>
+                    <div class="quantity-selector">
+                      <button type="button" class="qty-btn qty-minus" aria-label="Decrease quantity">−</button>
+                      <input type="number" id="Quantity" name="quantity" value="1" min="1" class="qty-input" aria-label="Product quantity">
+                      <button type="button" class="qty-btn qty-plus" aria-label="Increase quantity">+</button>
+                    </div>
+                  </div>
+                {% endif %}
+
+                <div class="installments-box">{{ form | payment_terms }}</div>
+
+                <div class="action-buttons">
+                  <button type="submit" name="add" id="AddToCart" class="btn-primary" {% unless current_variant.available %}disabled="disabled"{% endunless %} data-add-to-cart-text="Add to Cart" data-out-of-stock-text="Out of Stock" data-unavailable-text="Unavailable">
+                    <span id="AddToCartText">{% if current_variant.available %}Add to Cart{% else %}Out of Stock{% endif %}</span>
+                  </button>
+                  {% if block.settings.show_dynamic_checkout %}
+                    <div class="shopify-payment-wrapper">
+                      {{ form | payment_button }}
+                    </div>
+                  {% endif %}
+                </div>
+              {% endform %}
+            </div>
+          {%- when 'pickup_availability' -%}
+            <div id="StoreAvailability" class="pickup-availability" {{ block.shopify_attributes }}>
+              {% if current_variant.store_availabilities.size > 0 %}
+                {% assign availability = current_variant.store_availabilities | first %}
+                {% if availability.available %}✓ Pickup available at {{ availability.location.name }}{% else %}✕ Unavailable for pickup{% endif %}
+              {% endif %}
+            </div>
+        {%- endcase -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</div>
+
+<script type="application/json" id="ProductJson-{{ product.id }}">{{ product.variants | json }}</script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const quantitySelectors = document.querySelectorAll('.quantity-selector');
+  quantitySelectors.forEach(selector => {
+    const minusBtn = selector.querySelector('.qty-minus');
+    const plusBtn = selector.querySelector('.qty-plus');
+    const qtyInput = selector.querySelector('.qty-input');
+    if (minusBtn && plusBtn && qtyInput) {
+      minusBtn.addEventListener('click', function(e) { e.preventDefault(); let currentValue = parseInt(qtyInput.value) || 1; if (currentValue > 1) { qtyInput.value = currentValue - 1; } });
+      plusBtn.addEventListener('click', function(e) { e.preventDefault(); let currentValue = parseInt(qtyInput.value) || 1; qtyInput.value = currentValue + 1; });
+    }
+  });
+
+  const thumbnails = document.querySelectorAll('.thumbnail');
+  const mainImage = document.querySelector('#MainMedia');
+  thumbnails.forEach(thumb => {
+    thumb.addEventListener('click', function() {
+      thumbnails.forEach(t => t.classList.remove('active-thumb'));
+      this.classList.add('active-thumb');
+      const newSrc = this.getAttribute('data-image-src');
+      if (newSrc && mainImage.tagName === 'IMG') { mainImage.src = newSrc; }
+    });
+  });
+
+  const selectors = document.querySelectorAll('.single-option-selector');
+  let variants = [];
+  const jsonScript = document.querySelector('script[type="application/json"][id^="ProductJson"]');
+  if(jsonScript) { variants = JSON.parse(jsonScript.innerHTML); }
+
+  selectors.forEach(selector => {
+    selector.addEventListener('change', function() {
+      let currentOptions = [];
+      document.querySelectorAll('.single-option-selector').forEach(sel => {
+        if(sel.type === 'radio') { if(sel.checked) currentOptions.push(sel.value); } else { currentOptions.push(sel.value); }
+      });
+      let matchedVariant = variants.find(variant => { return variant.options.every((val, index) => val === currentOptions[index]); });
+      if (matchedVariant) {
+        document.getElementById('VariantIdHidden').value = matchedVariant.id;
+        window.history.replaceState(null, null, '?variant=' + matchedVariant.id);
+        
+        const btn = document.getElementById('AddToCart');
+        const btnText = document.getElementById('AddToCartText');
+        if (matchedVariant.available) { btn.disabled = false; btnText.textContent = btn.dataset.addToCartText || 'Add to Cart'; } 
+        else { btn.disabled = true; btnText.textContent = btn.dataset.outOfStockText || 'Out of Stock'; }
+        
+        const priceElement = document.getElementById('ProductPrice');
+        if (typeof Shopify !== 'undefined' && Shopify.formatMoney) { priceElement.innerHTML = Shopify.formatMoney(matchedVariant.price, "{{ cart.currency.symbol }}"); }
+        
+        const compareElement = document.getElementById('ComparePrice');
+        if (matchedVariant.compare_at_price > matchedVariant.price) {
+          if (typeof Shopify !== 'undefined' && Shopify.formatMoney) { compareElement.innerHTML = '<s>' + Shopify.formatMoney(matchedVariant.compare_at_price, "{{ cart.currency.symbol }}") + '</s>'; }
+        } else { compareElement.innerHTML = ''; }
+        
+        if (matchedVariant.featured_media) {
+          const matchingThumb = document.querySelector(`.thumbnail[data-media-id="${matchedVariant.featured_media.id}"]`);
+          if (matchingThumb) matchingThumb.click();
+        }
+      } else {
+        const btn = document.getElementById('AddToCart');
+        btn.disabled = true;
+        document.getElementById('AddToCartText').textContent = btn.dataset.unavailableText || 'Unavailable';
+      }
+    });
+  });
+});
+</script>
+
+{% stylesheet %}
+  .snowpeak-product-page { width: 100vw; padding: 120px 0 20px 0; background-attachment: fixed; background-repeat: no-repeat; background-size: cover; position: relative; left: 50%; right: 50%; margin-left: -50vw; margin-right: -50vw; }
+  .page-width { width: 100%; margin: 0 auto; padding: 0 20px; max-width: 1200px; }
+  .product-grid { width: 100%; display: grid; grid-template-columns: 1.2fr 1fr; gap: 40px; align-items: start; margin-bottom: 0px; }
+  .glass-box { background: rgba(255, 255, 255, 0.45); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.6); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); border-radius: 1.5rem; padding: 30px; }
+  .main-image-container { width: 100%; aspect-ratio: 4/3; display: flex; justify-content: center; align-items: center; margin-bottom: 20px; border-radius: 12px; overflow: hidden; }
+  .main-product-media { width: 100%; height: 100%; object-fit: cover; }
+  .thumbnails-container { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 10px; }
+  .thumbnail { width: 90px; height: 90px; flex-shrink: 0; border-radius: 12px; cursor: pointer; position: relative; padding: 8px; transition: all 0.3s ease; background: rgba(255, 255, 255, 0.45); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.6); box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08); }
+  .thumbnail.active-thumb { border-color: #000; transform: translateY(-4px); box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15); }
+  .thumbnail img { width: 100%; height: 100%; object-fit: cover; border-radius: 6px; }
+  .media-icon { position: absolute; top: -5px; right: -5px; background: #000; color: white; font-size: 11px; padding: 4px 6px; border-radius: 6px; box-shadow: 0 2px 5px rgba(0,0,0,0.3); }
+  .vendor { font-size: 0.85rem; color: #555; text-transform: uppercase; margin-bottom: 5px; }
+  .product-title { font-size: 2.5rem; font-weight: 800; margin: 0 0 20px 0; line-height: 1.1; color: #111; }
+  .price-block { margin-bottom: 25px; }
+  .current-price { font-size: 1.8rem; font-weight: 700; color: #111; }
+  .compare-price { font-size: 1.1rem; color: #777; margin-left: 10px; }
+  .tax-note, .unit-price { font-size: 0.85rem; color: #555; margin-top: 5px; }
+  .product-description { line-height: 1.6; margin-bottom: 30px; color: #333; max-height: 220px; overflow-y: auto; padding-right: 15px; }
+  .product-description::-webkit-scrollbar { width: 6px; }
+  .product-description::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.2); border-radius: 8px; }
+  .product-description::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.3); border-radius: 8px; }
+  .product-description::-webkit-scrollbar-thumb:hover { background: rgba(0, 0, 0, 0.5); }
+  .selector-wrapper, .color-selector-wrapper { margin-bottom: 20px; }
+  .selector-wrapper label, .color-selector-wrapper > label, .quantity-wrapper label { display: block; font-weight: 600; margin-bottom: 8px; font-size: 0.9rem; text-transform: uppercase; }
+  .glass-select { width: 100%; padding: 12px; background: rgba(255,255,255,0.6); border: 1px solid rgba(0,0,0,0.1); border-radius: 8px; font-size: 1rem; outline: none; }
+  .color-selector { display: flex; gap: 12px; flex-wrap: wrap; }
+  .hidden { display: none; }
+  .color-circle { display: inline-block !important; width: 40px; height: 40px; min-width: 40px; min-height: 40px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; transition: all 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.1); background-color: #ccc; }
+  .color-input:checked + .color-circle { border-color: #000; transform: scale(1.1); box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+  .quantity-wrapper { margin-bottom: 25px; }
+  .quantity-selector { display: flex !important; align-items: center !important; justify-content: space-between !important; background: rgba(255, 255, 255, 0.3) !important; border: 1px solid rgba(0, 0, 0, 0.2) !important; border-radius: 50px !important; width: 130px !important; height: 46px !important; padding: 3px !important; box-shadow: none !important; backdrop-filter: none !important; }
+  .qty-btn { appearance: none !important; -webkit-appearance: none !important; background: transparent !important; border: none !important; outline: none !important; color: #111 !important; font-size: 1.4rem !important; width: 40px !important; height: 40px !important; display: flex !important; justify-content: center !important; align-items: center !important; cursor: pointer !important; border-radius: 40px !important; transition: all 0.2s ease !important; padding: 0 !important; margin: 0 !important; box-shadow: none !important; flex-shrink: 0 !important; }
+  .qty-input { appearance: textfield !important; -moz-appearance: textfield !important; background: transparent !important; border: none !important; color: #111 !important; font-size: 1.2rem !important; font-weight: 700 !important; flex-grow: 1 !important; height: 100% !important; text-align: center !important; outline: none !important; padding: 0 !important; margin: 0 !important; box-shadow: none !important; min-width: 0 !important; }
+  .qty-input::-webkit-outer-spin-button, .qty-input::-webkit-inner-spin-button { appearance: none !important; -webkit-appearance: none !important; margin: 0 !important; }
+  .action-buttons { margin-top: 20px; display: flex; flex-direction: column; gap: 15px; }
+  .btn-primary { width: 100%; padding: 16px; background-color: #111; color: #fff; border: none; border-radius: 50px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: all 0.3s ease; letter-spacing: 0.5px; }
+  .btn-primary:hover { background-color: #333; transform: translateY(-2px); box-shadow: 0 8px 15px rgba(0,0,0,0.1); }
+  .btn-primary:disabled { background-color: #aaa; cursor: not-allowed; transform: none; box-shadow: none; }
+  .shopify-payment-wrapper { margin-top: 5px; }
+  .shopify-payment-button__button--unbranded { background-color: #111 !important; border-radius: 50px !important; }
+  .shopify-payment-button__button--unbranded:hover { background-color: #333 !important; }
+  
+  .pickup-availability { margin-top: 15px; font-size: 0.9rem; font-weight: 600; color: #27ae60; }
+  .product-block-app { margin-bottom: 20px; }
+  .product-block-custom-liquid { margin-bottom: 20px; }
+  @media (max-width: 768px) { .product-grid { grid-template-columns: 1fr; } }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Product information",
+  "blocks": [
+    { "type": "@app" },
+    { "type": "custom_liquid", "name": "Custom liquid", "settings": [{ "type": "liquid", "id": "custom_liquid", "label": "Custom liquid code" }] },
+    { "type": "vendor", "name": "Vendor", "limit": 1 },
+    { "type": "title", "name": "Title", "limit": 1 },
+    { "type": "price", "name": "Price", "limit": 1 },
+    { "type": "description", "name": "Description", "limit": 1 },
+    { "type": "pickup_availability", "name": "Pickup availability", "limit": 1 },
+    { 
+      "type": "buy_buttons", 
+      "name": "Buy buttons & variants", 
+      "limit": 1, 
+      "settings": [ 
+        { "type": "checkbox", "id": "show_dynamic_checkout", "label": "Show dynamic checkout button", "default": true }, 
+        { "type": "checkbox", "id": "show_quantity_selector", "label": "Show quantity selector", "default": true } 
+      ] 
+    }
+  ],
+  "presets": [
+    { 
+      "name": "Product information", 
+      "blocks": [ 
+        { "type": "vendor" }, 
+        { "type": "title" }, 
+        { "type": "price" }, 
+        { "type": "description" }, 
+        { "type": "buy_buttons" }, 
+        { "type": "pickup_availability" } 
+      ] 
+    }
+  ]
+}
+{% endschema %}

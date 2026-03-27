@@ -1,0 +1,261 @@
+<section class="bento-section">
+  <div class="bento-container">
+    <div class="bento-grid">
+      {% for block in section.blocks %}
+        {% if block.settings.collection %}
+          {% assign collection = block.settings.collection %}
+          {% assign first_image = collection.image %}
+          <div class="bento-item item-{{ forloop.index }}" {% if block.settings.image %}style="background-image: url('{{ block.settings.image | image_url: width: 800 }}');"{% elsif first_image %}style="background-image: url('{{ first_image | image_url: width: 800 }}');"{% else %}style="background-color: #f3f4f6;"{% endif %}>
+            <div class="bento-glass-panel">
+              <h3 class="bento-title">{{ block.settings.title | default: collection.title }}</h3>
+              <p class="bento-description">{{ block.settings.description }}</p>
+              <a href="{{ collection.url }}" class="bento-btn">{{ block.settings.button_label | default: 'Explore' }}</a>
+            </div>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+
+    {% if section.settings.show_view_all %}
+      <div class="bento-footer">
+        <a href="{{ routes.collections_url }}" class="bento-btn-all">{{ section.settings.view_all_label | default: 'View all collections' }}</a>
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+<style>
+  .bento-section {
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
+    padding: 60px 20px;
+    background: transparent;
+  }
+
+  .bento-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 40px;
+  }
+
+  .bento-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-auto-rows: 400px;
+    gap: 24px;
+    margin-bottom: 40px;
+  }
+
+  .bento-item {
+    position: relative;
+    border-radius: 20px;
+    overflow: hidden;
+    background-size: cover;
+    background-position: center;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  }
+
+  .bento-item:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+  }
+
+  @media screen and (min-width: 768px) {
+    .bento-grid {
+      grid-template-columns: repeat(2, 1fr);
+      grid-auto-rows: 350px;
+    }
+
+    .item-1 { grid-column: span 1; }
+    .item-2 { grid-column: span 1; }
+    .item-3 { grid-column: span 1; }
+    .item-4 { grid-column: span 1; }
+  }
+
+  .bento-glass-panel {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.05) 100%);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-top: 1px solid rgba(255, 255, 255, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    padding: 24px 20px;
+    color: white;
+    text-align: center;
+    height: auto;
+  }
+
+  .bento-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0 0 8px 0;
+    letter-spacing: 0.5px;
+    color: #ffffff;
+    font-family: 'Orbitron', sans-serif;
+  }
+
+  .bento-description {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.85);
+    margin: 0 0 12px 0;
+    line-height: 1.4;
+    display: none;
+  }
+
+  .bento-btn {
+    display: inline-block;
+    padding: 10px 24px;
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    color: #ffffff;
+    text-decoration: none !important; /* Forcé ici */
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .bento-btn:hover {
+    background: rgba(255, 255, 255, 0.4);
+    transform: translateY(-2px);
+    text-decoration: none !important; /* Sécurité au survol */
+    color: #ffffff !important;
+  }
+
+  .bento-footer {
+    text-align: center;
+    margin-top: 40px;
+  }
+
+  .bento-btn-all {
+    display: inline-block;
+    padding: 15px 40px;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    color: #000000;
+    text-decoration: none !important; /* Forcé ici */
+    border-radius: 50px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  }
+
+  .bento-btn-all:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-3px);
+    text-decoration: none !important; /* Sécurité au survol */
+    color: #000000 !important;
+  }
+
+  @media screen and (max-width: 768px) {
+    .bento-grid {
+      grid-template-columns: 1fr;
+      grid-auto-rows: 400px;
+    }
+
+    .item-1, .item-2, .item-3, .item-4 {
+      grid-column: span 1;
+      height: 400px;
+    }
+
+    .bento-glass-panel {
+      width: 100% !important;
+      height: 50% !important;
+      top: auto !important;
+      bottom: 0 !important;
+      left: 0 !important;
+      right: 0 !important;
+      padding: 20px;
+      border: none;
+      border-top: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .bento-container {
+      padding: 0 20px;
+    }
+
+    .bento-section {
+      padding: 40px 15px;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Bento Collections",
+  "max_blocks": 4,
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_view_all",
+      "label": "Show 'View all' button",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "view_all_label",
+      "label": "View all button text",
+      "default": "View all collections"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "collection",
+      "name": "Collection",
+      "settings": [
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Select a collection"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Custom image (Optional)"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Custom title (Optional)"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "Custom description (Optional)"
+        },
+        {
+          "type": "text",
+          "id": "button_label",
+          "label": "Button text",
+          "default": "Explore"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Bento Collections",
+      "blocks": [
+        { "type": "collection" },
+        { "type": "collection" },
+        { "type": "collection" },
+        { "type": "collection" }
+      ]
+    }
+  ]
+}
+{% endschema %}

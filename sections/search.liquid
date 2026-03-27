@@ -1,0 +1,154 @@
+<div class="search-page-container">
+   <h1 class="search-page-title">{{ 'search.title' | t | default: 'Search' }}</h1>
+ 
+   <div class="glass-search-form-wrapper" style="position: relative; max-width: 600px; margin: 0 auto 40px;">
+     <form action="{{ routes.search_url }}" method="get" role="search" class="glass-search-form" style="margin: 0; max-width: 100%;">
+       <input
+         type="search"
+         name="q"
+         value="{{ search.terms | escape }}"
+         placeholder="Search..."
+         class="glass-search-input-main"
+         id="MainSearchInput"
+         autocomplete="off"
+       >
+       <button type="submit" class="glass-search-btn-main">Search</button>
+     </form>
+     <div class="glass-search-results" id="MainSearchResults" style="top: calc(100% + 5px);"></div>
+   </div>
+ 
+   {% if search.performed %}
+     {% if search.results_count == 0 %}
+       <p class="search-message">No results found for "{{ search.terms }}".</p>
+     {% else %}
+       <p class="search-message">{{ search.results_count }} result(s) for "{{ search.terms }}"</p>
+ 
+       {% paginate search.results by 12 %}
+         <div class="glass-search-grid">
+           {% for result in search.results %}
+             <div class="glass-search-grid-item">
+               {% if result.object_type == 'product' %}
+                 {% render 'product-card', product: result %}
+               {% elsif result.object_type == 'article' %}
+                 <a href="{{ result.url }}" class="glass-card-wrapper" style="padding:20px; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; height:100%; background:rgba(255,255,255,0.4); backdrop-filter:blur(10px); border-radius:1rem; text-decoration:none; color:#111;">
+                   <span style="font-size:12px; font-weight:700; color:#555; text-transform:uppercase; margin-bottom:10px;">Article</span>
+                   <h3 style="font-size:18px; font-weight:800; margin:0;">{{ result.title }}</h3>
+                 </a>
+               {% elsif result.object_type == 'page' %}
+                 <a href="{{ result.url }}" class="glass-card-wrapper" style="padding:20px; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; height:100%; background:rgba(255,255,255,0.4); backdrop-filter:blur(10px); border-radius:1rem; text-decoration:none; color:#111;">
+                   <span style="font-size:12px; font-weight:700; color:#555; text-transform:uppercase; margin-bottom:10px;">Page</span>
+                   <h3 style="font-size:18px; font-weight:800; margin:0;">{{ result.title }}</h3>
+                 </a>
+               {% endif %}
+             </div>
+           {% endfor %}
+         </div>
+ 
+         <div class="search-pagination">
+           {{ paginate | default_pagination }}
+         </div>
+       {% endpaginate %}
+     {% endif %}
+   {% endif %}
+</div>
+
+<script>
+   document.addEventListener('DOMContentLoaded', function() {
+     const mainInput = document.getElementById('MainSearchInput');
+     const mainResults = document.getElementById('MainSearchResults');
+     let mainTimer;
+ 
+     if (!mainInput || !mainResults) return;
+ 
+     mainInput.addEventListener('input', function() {
+       clearTimeout(mainTimer);
+       const query = this.value.trim();
+ 
+       if (query.length < 2) {
+         mainResults.classList.remove('active');
+         return;
+       }
+ 
+       mainTimer = setTimeout(() => {
+         fetch(`${window.Shopify.routes.root}search/suggest.json?q=${encodeURIComponent(query)}&resources[type]=product,article,page&resources[limit]=4`)
+           .then(response => response.json())
+           .then(data => {
+             const products = data.resources.results.products || [];
+             const articles = data.resources.results.articles || [];
+             const pages = data.resources.results.pages || [];
+             
+             const allResults = [...products, ...articles, ...pages].slice(0, 4);
+             mainResults.innerHTML = '';
+ 
+             if (allResults.length === 0) {
+               mainResults.innerHTML = '<div class="glass-search-empty" style="padding:15px; color:#555;">No results found.</div>';
+             } else {
+               allResults.forEach(item => {
+                 const isProduct = item.price !== undefined;
+                 const typeLabel = isProduct ? '' : (item.author ? 'Article' : 'Page');
+                 
+                 const html = `
+                   <a href="${item.url}" class="glass-search-item" style="display:flex; align-items:center; gap:15px; padding:15px; text-decoration:none; border-bottom:1px solid rgba(0,0,0,0.05);">
+                     ${item.image ? `<img src="${item.image}" alt="${item.title}" style="width:50px; height:50px; object-fit:cover; border-radius:8px;">` : '<div style="width:50px; height:50px; border-radius:8px; background:#f0f0f0; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700; color:#999; text-transform:uppercase;">'+typeLabel+'</div>'}
+                     <div class="glass-search-info">
+                       <span style="display:block; font-weight:600; color:#111;">${item.title}</span>
+                       ${isProduct ? `<span style="display:block; font-size:14px; color:#555;">${item.price}</span>` : ''}
+                     </div>
+                   </a>
+                 `;
+                 mainResults.insertAdjacentHTML('beforeend', html);
+               });
+             }
+             mainResults.classList.add('active');
+           })
+           .catch(error => console.error('API Error:', error));
+       }, 300); 
+     });
+ 
+     document.addEventListener('click', function(e) {
+       if (!mainInput.contains(e.target) && !mainResults.contains(e.target)) {
+         mainResults.classList.remove('active');
+       }
+     });
+     
+     mainInput.addEventListener('focus', function() {
+       if (this.value.trim().length >= 2 && mainResults.innerHTML !== '') {
+         mainResults.classList.add('active');
+       }
+     });
+   });
+</script>
+ 
+{% stylesheet %}
+   .search-page-container { width: 100%; max-width: var(--page-width, 1200px); margin: 0 auto; padding: 120px 20px 60px 20px; }
+   .search-page-title { text-align: center; font-size: 36px; font-weight: 700; color: #111; margin-bottom: 30px; letter-spacing: -1px; }
+   .search-message { text-align: center; color: #555; margin-bottom: 40px; font-size: 16px; }
+   
+   .glass-search-form { display: flex; gap: 12px; justify-content: center; align-items: center; flex-wrap: nowrap; }
+   .glass-search-input-main { flex: 1; width: 100%; padding: 15px 25px; font-size: 16px; border-radius: 50px; border: 1px solid rgba(255, 255, 255, 0.4); background: rgba(255, 255, 255, 0.55); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); transition: all 0.3s ease; outline: none; box-shadow: 0 4px 15px rgba(0,0,0,0.05); color: #111; }
+   .glass-search-input-main:focus { background: rgba(255, 255, 255, 0.8); border-color: rgba(255, 255, 255, 0.8); }
+   .glass-search-btn-main { padding: 15px 35px; background: #111; color: #fff; font-weight: 600; font-size: 16px; border-radius: 50px; text-decoration: none; transition: all 0.3s ease; cursor: pointer; border: none; white-space: nowrap; height: 100%; }
+   .glass-search-btn-main:hover { background: #333; transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+   .glass-search-results { position: absolute; top: 100%; left: 0; width: 100%; background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border: 1px solid rgba(255, 255, 255, 0.6); border-radius: 16px; z-index: 100; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1); display: none; overflow: hidden; }
+   .glass-search-results.active { display: block; }
+   .glass-search-item:hover { background: rgba(0,0,0,0.02); }
+   
+   .glass-search-grid { display: grid !important; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)) !important; gap: 32px !important; margin-bottom: 50px; align-items: stretch !important; position: relative; z-index: 1; }
+   .glass-search-grid-item { display: block; height: 100%; }
+   
+   .search-pagination { text-align: center; margin-top: 50px; position: relative; z-index: 1; }
+   .search-pagination span { display: inline-block; margin: 0 5px; }
+   .search-pagination a { color: #111; text-decoration: none; padding: 10px 20px; border-radius: 50px; background: rgba(255,255,255,0.6); backdrop-filter: blur(10px); font-weight: 600; transition: all 0.2s; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+   .search-pagination a:hover { background: #111; color: #fff; transform: translateY(-2px); }
+   .search-pagination .current { padding: 10px 20px; background: #111; color: #fff; border-radius: 50px; font-weight: 600; box-shadow: 0 4px 15px rgba(0,0,0,0.15); }
+ 
+   @media (max-width: 768px) { .glass-search-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 20px !important; } }
+   @media (max-width: 550px) { .glass-search-form { flex-direction: column; } .glass-search-btn-main { width: 100%; } .glass-search-grid { grid-template-columns: 1fr !important; gap: 20px !important; } }
+{% endstylesheet %}
+ 
+{% schema %}
+{
+   "name": "Search",
+   "settings": []
+}
+{% endschema %}

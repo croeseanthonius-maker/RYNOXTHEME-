@@ -1,0 +1,133 @@
+/* Glass Morphism Effect - Universal Button Enhancement */
+
+/* Base glass effect styles */
+button:not(.qty-btn),
+.btn:not(.qty-btn),
+.search-form__button,
+.glass-button,
+[type="submit"]:not(.qty-btn),
+[type="button"]:not(.qty-btn) {
+  position: relative;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  box-shadow: 
+    0 8px 32px rgba(31, 38, 135, 0.37),
+    inset 0 1px 1px rgba(255, 255, 255, 0.2) !important;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+}
+
+/* Add glass gradient overlay */
+button:not(.qty-btn)::before,
+.btn:not(.qty-btn)::before,
+.search-form__button::before,
+.glass-button::before,
+[type="submit"]:not(.qty-btn)::before,
+[type="button"]:not(.qty-btn)::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.15) 0%,
+    rgba(255, 255, 255, 0.05) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+/* Specific styling for glass buttons */
+.glass-button {
+  width: 350px;
+  height: 180px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.25) 0%,
+    rgba(255, 255, 255, 0.1) 100%
+  ) !important;
+}
+
+.glass-button span {
+  font-family: "Orbitron", sans-serif;
+  color: white;
+  font-size: 2.5rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  position: relative;
+  z-index: 2;
+}
+
+/* Enhanced hover state */
+button:not(.qty-btn):hover,
+.btn:not(.qty-btn):hover,
+.search-form__button:hover,
+.glass-button:hover,
+[type="submit"]:not(.qty-btn):hover,
+[type="button"]:not(.qty-btn):hover {
+  transform: translateY(-3px) scale(1.02) !important;
+  border-color: rgba(255, 255, 255, 0.4) !important;
+  box-shadow: 
+    0 12px 40px rgba(31, 38, 135, 0.5),
+    inset 0 1px 1px rgba(255, 255, 255, 0.3) !important;
+  backdrop-filter: blur(15px) !important;
+  -webkit-backdrop-filter: blur(15px) !important;
+}
+
+/* Active state */
+button:not(.qty-btn):active,
+.btn:not(.qty-btn):active,
+.search-form__button:active,
+.glass-button:active,
+[type="submit"]:not(.qty-btn):active,
+[type="button"]:not(.qty-btn):active {
+  transform: translateY(-1px) scale(0.98) !important;
+  box-shadow: 
+    0 4px 20px rgba(31, 38, 135, 0.25),
+    inset 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+}
+
+
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .glass-button {
+    width: 280px;
+    height: 140px;
+  }
+
+  .glass-button span {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .glass-button {
+    width: 220px;
+    height: 110px;
+  }
+
+  .glass-button span {
+    font-size: 1.5rem;
+  }
+}
+.glass-button-animated-bg {
+  background: linear-gradient(-45deg, rgba(255,255,255,0.1), rgba(255,255,255,0.4), rgba(255,255,255,0.1));
+  background-size: 400% 400%;
+  animation: floatBG 10s ease infinite;
+}
+@keyframes floatBG {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}

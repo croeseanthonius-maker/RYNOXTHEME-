@@ -1,0 +1,228 @@
+<style>
+  .glass-card-wrapper {
+    display: block;
+    height: 100%;
+    color: inherit;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 1.5rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  }
+  
+  .glass-card-wrapper:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+  }
+
+  .glass-card-wrapper .card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 1.5rem;
+    overflow: hidden; 
+  }
+
+  .glass-card-wrapper .tilt {
+    position: relative;
+    width: 100%;
+    background: var(--color-card-bg);
+  }
+
+  .glass-card-wrapper .tilt img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    display: block;
+  }
+
+  .glass-card-wrapper .info {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.55) !important;
+    backdrop-filter: blur(15px) !important;
+    -webkit-backdrop-filter: blur(15px) !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.6);
+  }
+
+  .glass-card-wrapper .bottom {
+    margin-top: auto;
+  }
+
+  .glass-card-wrapper .badge {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    z-index: 10;
+    background: var(--color-badge-bg);
+    color: var(--color-badge-text);
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .glass-card-wrapper .bottom .btn {
+    border-radius: 50px !important;
+    padding: 12px 20px;
+    background: var(--color-button-bg);
+    color: var(--color-button-text);
+    border: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 15px;
+    text-decoration: none;
+  }
+  
+  .glass-card-wrapper .bottom .btn:hover:not([disabled]) {
+    background: var(--color-button-bg-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  }
+  
+  .glass-card-wrapper .bottom .btn svg {
+    margin-left: 4px;
+  }
+
+  .glass-card-wrapper .cat {
+    font-size: 12px;
+    text-transform: uppercase;
+    font-weight: 700;
+    opacity: 0.7;
+    margin-bottom: 5px;
+  }
+
+  .glass-card-wrapper .title {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--color-foreground);
+    margin: 0 0 10px 0;
+    text-decoration: none;
+  }
+
+  .glass-card-wrapper .desc {
+    font-size: 14px;
+    opacity: 0.8;
+    margin-bottom: 15px;
+  }
+
+  .glass-card-wrapper .price {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .glass-card-wrapper .price .old {
+    text-decoration: line-through;
+    opacity: 0.6;
+    font-size: 14px;
+  }
+
+  .glass-card-wrapper .price .new {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--color-foreground);
+  }
+
+  .glass-card-wrapper .unit-price {
+    font-size: 12px;
+    opacity: 0.7;
+    width: 100%;
+  }
+
+  .glass-card-wrapper .stock {
+    font-size: 12px;
+    font-weight: 700;
+    text-align: center;
+    margin-top: 10px;
+  }
+</style>
+
+<div class="glass-card-wrapper">
+  <div class="card">
+    
+    {%- liquid
+      assign final_badge = badge_text
+      if final_badge == blank and product.compare_at_price > product.price
+        assign final_badge = 'Promo'
+      endif
+    -%}
+
+    {% if final_badge != blank %}
+      <div class="badge">{{ final_badge }}</div>
+    {% endif %}
+
+    <a href="{{ product.url }}" class="tilt" tabindex="-1">
+      <div class="img">
+        {% if product.featured_image %}
+          {{ product.featured_image | image_url: width: 500, height: 500 | image_tag: alt: product.title }}
+        {% endif %}
+      </div>
+    </a>
+    
+    <div class="info">
+      <div class="cat">{{ product.type }}</div>
+      <a href="{{ product.url }}" style="text-decoration: none;"><h2 class="title">{{ product.title }}</h2></a>
+      <p class="desc">{{ product.description | strip_html | truncatewords: 15 }}</p>
+      
+      <div class="bottom">
+        <div class="price">
+          {%- if product.price_varies -%}
+            <span class="from">{{ 'products.from' | t | default: 'From' }}</span>
+          {%- endif -%}
+          {% if product.compare_at_price > product.price %}
+            <span class="old">{{ product.compare_at_price | money }}</span>
+          {% endif %}
+          <span class="new">{{ product.price | money }}</span>
+
+          {%- if product.selected_or_first_available_variant.unit_price_measurement -%}
+            <div class="unit-price">
+              {{ product.selected_or_first_available_variant.unit_price | money }} / 
+              {%- if product.selected_or_first_available_variant.unit_price_measurement.reference_value != 1 -%}
+                {{- product.selected_or_first_available_variant.unit_price_measurement.reference_value -}}
+              {%- endif -%}
+              {{ product.selected_or_first_available_variant.unit_price_measurement.reference_unit }}
+            </div>
+          {%- endif -%}
+        </div>
+        
+        <form method="post" action="{{ routes.cart_add_url }}" class="add-to-cart-form">
+          <input type="hidden" name="id" value="{{ product.variants.first.id }}">
+          <button type="submit" class="btn" {% unless product.available %}disabled{% endunless %}>
+            <span>
+              {% if product.available %}
+                {{ 'products.add_to_cart' | t | default: 'Add to Cart' }}
+              {% else %}
+                {{ 'products.out_of_stock' | t | default: 'Sold Out' }}
+              {% endif %}
+            </span>
+            <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4"/>
+              <line x1="3" y1="6" x2="21" y2="6"/>
+              <path d="M16 10a4 4 0 01-8 0"/>
+            </svg>
+          </button>
+        </form>
+      </div>
+      
+      {% if product.available %}
+        <div class="stock" style="color: var(--color-success, #27ae60);">{{ 'products.in_stock' | t | default: 'In Stock' }}</div>
+      {% else %}
+        <div class="stock out-of-stock" style="color: var(--color-error, #e74c3c);">{{ 'products.out_of_stock' | t | default: 'Out of Stock' }}</div>
+      {% endif %}
+    </div>
+    
+  </div>
+</div>

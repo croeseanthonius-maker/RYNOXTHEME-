@@ -1,0 +1,232 @@
+{% layout none %}
+<!doctype html>
+<html lang="{{ request.locale.iso_code }}">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="theme-color" content="#111111">
+    <title>Your Gift Card | {{ shop.name }}</title>
+    
+    <script src="{{ 'vendor/qrcode.js' | shopify_asset_url }}" defer></script>
+
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: {{ settings.type_body_font.family }}, sans-serif;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        color: #111;
+      }
+
+      .gift-card-container {
+        width: 100%;
+        max-width: 500px;
+        padding: 20px;
+        box-sizing: border-box;
+      }
+
+      .shop-title {
+        text-align: center;
+        font-family: {{ settings.type_heading_font.family }}, sans-serif;
+        font-size: 24px;
+        font-weight: 700;
+        letter-spacing: 2px;
+        margin-bottom: 30px;
+        text-transform: uppercase;
+      }
+
+      .glass-card {
+        background: rgba(255, 255, 255, 0.4);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.6);
+        border-radius: 24px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        padding: 40px 30px;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .glass-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 50%;
+        height: 100%;
+        background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0) 100%);
+        transform: skewX(-25deg);
+        animation: shine 6s infinite;
+      }
+
+      @keyframes shine {
+        0% { left: -100%; }
+        20% { left: 200%; }
+        100% { left: 200%; }
+      }
+
+      .gc-illustration {
+        width: 80px;
+        margin-bottom: 20px;
+      }
+
+      .gc-value {
+        font-size: 48px;
+        font-weight: 800;
+        margin-bottom: 5px;
+        color: #111;
+        letter-spacing: -1px;
+      }
+
+      .gc-balance {
+        font-size: 14px;
+        color: #555;
+        margin-bottom: 30px;
+        font-weight: 600;
+      }
+
+      .gc-code-wrapper {
+        background: rgba(255, 255, 255, 0.6);
+        border: 1px dashed rgba(0, 0, 0, 0.2);
+        border-radius: 12px;
+        padding: 15px;
+        margin-bottom: 30px;
+      }
+
+      .gc-code {
+        font-family: 'Courier New', Courier, monospace;
+        font-size: 22px;
+        font-weight: 800;
+        letter-spacing: 3px;
+        color: #111;
+        text-transform: uppercase;
+        border: none;
+        background: transparent;
+        text-align: center;
+        width: 100%;
+        outline: none;
+      }
+
+      .gc-qr-wrapper {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 30px;
+      }
+
+      .gc-qr {
+        background: #fff;
+        padding: 15px;
+        border-radius: 16px;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+      }
+
+      .gc-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .btn {
+        display: block;
+        width: 100%;
+        padding: 16px;
+        border-radius: 50px;
+        font-size: 16px;
+        font-weight: 600;
+        text-decoration: none;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: none;
+        font-family: {{ settings.type_body_font.family }}, sans-serif;
+      }
+
+      .btn-primary {
+        background: #111;
+        color: #fff;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+      }
+
+      .btn-primary:hover {
+        background: #333;
+        transform: translateY(-2px);
+      }
+
+      .btn-secondary {
+        background: rgba(255,255,255,0.5);
+        color: #111;
+        border: 1px solid rgba(0,0,0,0.1);
+      }
+
+      .btn-secondary:hover {
+        background: rgba(255,255,255,0.8);
+      }
+
+      @media print {
+        @page { margin: 0; }
+        body { background: white; }
+        .glass-card { box-shadow: none; border: 1px solid #ccc; }
+        .btn, .glass-card::before { display: none; }
+      }
+    </style>
+  </head>
+  
+  <body>
+    <div class="gift-card-container">
+      
+      <div class="shop-title">{{ shop.name }}</div>
+      
+      <main class="glass-card">
+        
+        <svg class="gc-illustration" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 12 20 22 4 22 4 12"></polyline>
+          <rect x="2" y="7" width="20" height="5"></rect>
+          <line x1="12" y1="22" x2="12" y2="7"></line>
+          <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"></path>
+          <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"></path>
+        </svg>
+
+        <div class="gc-value">{{ gift_card.initial_value | money_without_trailing_zeros }}</div>
+        
+        {% if gift_card.balance != gift_card.initial_value %}
+          <div class="gc-balance">Remaining balance: {{ gift_card.balance | money }}</div>
+        {% else %}
+          <div class="gc-balance">Gift Card</div>
+        {% endif %}
+
+        <div class="gc-code-wrapper">
+          <input type="text" class="gc-code" value="{{ gift_card.code | format_code }}" onclick="this.select();" readonly>
+        </div>
+
+        <div class="gc-qr-wrapper">
+          <div id="QrCode" class="gc-qr" data-identifier="{{ gift_card.qr_identifier }}"></div>
+        </div>
+
+        <div class="gc-actions">
+          <a href="{{ routes.root_url }}" class="btn btn-primary" target="_blank">Start Shopping</a>
+          <button class="btn btn-secondary" onclick="window.print();">Print Gift Card</button>
+        </div>
+      </main>
+
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const qrContainer = document.getElementById('QrCode');
+        new QRCode(qrContainer, {
+          text: qrContainer.dataset.identifier,
+          width: 120,
+          height: 120,
+          colorDark : "#000000",
+          colorLight : "#ffffff",
+          correctLevel : QRCode.CorrectLevel.H
+        });
+      });
+    </script>
+  </body>
+</html>

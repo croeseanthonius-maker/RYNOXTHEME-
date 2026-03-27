@@ -1,0 +1,275 @@
+[
+  {
+    "name": "theme_info",
+    "theme_name": "Rynox",
+    "theme_version": "0.1.0",
+    "theme_author": "Shopify",
+    "theme_documentation_url": "https://help.shopify.com/manual/online-store/themes",
+    "theme_support_url": "https://support.shopify.com/"
+  },
+  {
+    "name": "Brand",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "logo",
+        "label": "Logo"
+      },
+      {
+        "type": "image_picker",
+        "id": "favicon",
+        "label": "Favicon"
+      }
+    ]
+  },
+  {
+    "name": "Typography",
+    "settings": [
+      {
+        "type": "font_picker",
+        "id": "type_heading_font",
+        "default": "work_sans_n6",
+        "label": "Heading font"
+      },
+      {
+        "type": "font_picker",
+        "id": "type_body_font",
+        "default": "work_sans_n4",
+        "label": "Body font"
+      }
+    ]
+  },
+  {
+    "name": "Layout",
+    "settings": [
+      {
+        "type": "select",
+        "id": "max_page_width",
+        "label": "t:labels.page_width",
+        "options": [
+          {
+            "value": "90rem",
+            "label": "t:options.page_width.narrow"
+          },
+          {
+            "value": "110rem",
+            "label": "t:options.page_width.wide"
+          }
+        ],
+        "default": "90rem"
+      },
+      {
+        "type": "range",
+        "id": "min_page_margin",
+        "min": 10,
+        "max": 100,
+        "step": 1,
+        "unit": "px",
+        "label": "t:labels.page_margin",
+        "default": 20
+      }
+    ]
+  },
+  {
+    "name": "Global colors",
+    "settings": [
+      {
+        "type": "color",
+        "id": "background",
+        "label": "Background",
+        "default": "#FFFFFF"
+      },
+      {
+        "type": "color",
+        "id": "foreground",
+        "label": "Foreground",
+        "default": "#121212"
+      },
+      {
+        "type": "color",
+        "id": "primary_accent",
+        "label": "Primary accent",
+        "default": "#334FB4"
+      },
+      {
+        "type": "color",
+        "id": "secondary_accent",
+        "label": "Secondary accent",
+        "default": "#F2F2F2"
+      }
+    ]
+  },
+  {
+    "name": "UI elements colors",
+    "settings": [
+      {
+        "type": "color",
+        "id": "color_card_bg",
+        "label": "Card background",
+        "default": "#ffffff"
+      },
+      {
+        "type": "color",
+        "id": "color_button_bg",
+        "label": "Button background",
+        "default": "#18181b"
+      },
+      {
+        "type": "color",
+        "id": "color_button_text",
+        "label": "Button text",
+        "default": "#ffffff"
+      },
+      {
+        "type": "color",
+        "id": "color_button_bg_hover",
+        "label": "Button background (hover)",
+        "default": "#3f3f46"
+      },
+      {
+        "type": "color",
+        "id": "color_badge_bg",
+        "label": "Badge background",
+        "default": "#a90329"
+      },
+      {
+        "type": "color",
+        "id": "color_badge_text",
+        "label": "Badge text",
+        "default": "#ffffff"
+      }
+    ]
+  },
+  {
+    "name": "Home page background",
+    "settings": [
+      {
+        "type": "color",
+        "id": "home_bg_color",
+        "label": "Background color",
+        "default": "#f5f7fa"
+      },
+      {
+        "type": "color",
+        "id": "home_fg_color",
+        "label": "Text (Foreground) color",
+        "default": "#111111"
+      },
+      {
+        "type": "image_picker",
+        "id": "home_bg_image",
+        "label": "Background image"
+      }
+    ]
+  },
+  {
+    "name": "Product page background",
+    "settings": [
+      {
+        "type": "color",
+        "id": "global_product_bg_color",
+        "label": "Background color",
+        "default": "#ffffff"
+      },
+      {
+        "type": "color",
+        "id": "global_product_fg_color",
+        "label": "Text (Foreground) color",
+        "default": "#111111"
+      },
+      {
+        "type": "image_picker",
+        "id": "global_product_bg_image",
+        "label": "Background image"
+      }
+    ]
+  },
+  {
+    "name": "Cart page background",
+    "settings": [
+      {
+        "type": "color",
+        "id": "global_cart_bg_color",
+        "label": "Background color",
+        "default": "#ffffff"
+      },
+      {
+        "type": "color",
+        "id": "global_cart_fg_color",
+        "label": "Text (Foreground) color",
+        "default": "#111111"
+      },
+      {
+        "type": "image_picker",
+        "id": "global_cart_bg_image",
+        "label": "Background image"
+      }
+    ]
+  },
+  {
+    "name": "Collection page background",
+    "settings": [
+      {
+        "type": "color",
+        "id": "global_collection_bg_color",
+        "label": "Background color",
+        "default": "#ffffff"
+      },
+      {
+        "type": "color",
+        "id": "global_collection_fg_color",
+        "label": "Text (Foreground) color",
+        "default": "#111111"
+      },
+      {
+        "type": "image_picker",
+        "id": "global_collection_bg_image",
+        "label": "Background image"
+      }
+    ]
+  },
+  {
+    "name": "List collections background",
+    "settings": [
+      {
+        "type": "color",
+        "id": "global_list_collections_bg_color",
+        "label": "Background color",
+        "default": "#ffffff"
+      },
+      {
+        "type": "color",
+        "id": "global_list_collections_fg_color",
+        "label": "Text (Foreground) color",
+        "default": "#111111"
+      },
+      {
+        "type": "image_picker",
+        "id": "global_list_collections_bg_image",
+        "label": "Background image"
+      }
+    ]
+  },
+  {
+    "name": "Search page background",
+    "settings": [
+      {
+        "type": "color",
+        "id": "global_search_bg_color",
+        "label": "Background color",
+        "default": "#ffffff"
+      },
+      {
+        "type": "color",
+        "id": "global_search_fg_color",
+        "label": "Text (Foreground) color",
+        "default": "#111111"
+      },
+      {
+        "type": "image_picker",
+        "id": "global_search_bg_image",
+        "label": "Background image"
+      }
+    ]
+  }
+]

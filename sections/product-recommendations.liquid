@@ -1,0 +1,122 @@
+{% comment %}
+  RynoxTheme - Final Floating Recommendations (Glassmorphism Fixed)
+{% endcomment %}
+
+<div class="product-recommendations-container"
+     data-section-id="{{ section.id }}"
+     data-product-id="{{ product.id }}"
+     data-limit="{{ section.settings.limit }}">
+
+  {% if recommendations.performed and recommendations.products_count > 0 %}
+    <div class="rynoxtheme-rec-wrapper">
+      {% if section.settings.title != blank %}
+        <h2 class="recommendations-heading" style="color: {{ section.settings.heading_color }} !important;">
+          {{ section.settings.title }}
+        </h2>
+      {% endif %}
+
+      <div class="rynoxtheme-recommendations-grid">
+        {% for product in recommendations.products %}
+          <div class="recommendation-item">
+            {% render 'product-card', product: product %}
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+</div>
+
+{% schema %}
+{
+  "name": "Product recommendations",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "You may also like"
+    },
+    {
+      "type": "range",
+      "id": "limit",
+      "label": "Maximum products to show",
+      "min": 2,
+      "max": 12,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading Color",
+      "default": "#111111"
+    }
+  ],
+  "presets": [{ "name": "Product recommendations" }]
+}
+{% endschema %}
+
+<script>
+  /* Script pour charger les produits recommandés en asynchrone (Exigence Shopify) */
+  document.addEventListener('DOMContentLoaded', function() {
+    const container = document.querySelector('.product-recommendations-container');
+    if (!container) return;
+    const url = `/recommendations/products?section_id=${container.dataset.sectionId}&product_id=${container.dataset.productId}&limit=${container.dataset.limit}`;
+    fetch(url).then(res => res.text()).then(text => {
+      const html = new DOMParser().parseFromString(text, 'text/html');
+      const recs = html.querySelector('.product-recommendations-container');
+      if (recs && recs.innerHTML.trim().length) container.innerHTML = recs.innerHTML;
+    });
+  });
+</script>
+
+{% stylesheet %}
+  /* 1. RENDRE LA SECTION TRANSPARENTE */
+  .product-recommendations-container {
+    background: transparent !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .rynoxtheme-rec-wrapper {
+    padding: 20px 20px 60px 20px !important; /* 20px en haut (au lieu de 60px), 60px en bas */
+    background: transparent !important;
+    max-width: var(--page-width, 1200px);
+    margin: 0 auto;
+  }
+
+  /* 2. LE TITRE */
+  .recommendations-heading {
+    text-align: center;
+    margin-bottom: 40px !important;
+    font-size: 32px;
+    font-weight: 700;
+  }
+
+  /* 3. LA GRILLE - S'adapte parfaitement au design en verre */
+  .rynoxtheme-recommendations-grid {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)) !important;
+    gap: 30px !important;
+    align-items: stretch !important;
+  }
+
+  .recommendation-item {
+    display: block;
+    height: 100%; /* Force les cartes à avoir la même hauteur */
+  }
+
+  /* 4. RESPONSIVE MOBILE */
+  @media (max-width: 768px) {
+    .rynoxtheme-recommendations-grid {
+      grid-template-columns: repeat(2, 1fr) !important;
+      gap: 15px !important;
+    }
+  }
+
+  @media (max-width: 550px) {
+    .rynoxtheme-recommendations-grid {
+      grid-template-columns: 1fr !important;
+    }
+  }
+{% endstylesheet %}
