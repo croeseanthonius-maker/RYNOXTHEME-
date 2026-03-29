@@ -100,26 +100,26 @@
 
                 {%- if product.gift_card? -%}
                   <div class="recipient-form" style="margin-bottom: 20px;">
-                    <label style="display:flex; align-items:center; gap:8px; font-weight:600; cursor:pointer;">
+                    <label for="Recipient-checkbox" style="display:flex; align-items:center; gap:8px; font-weight:600; cursor:pointer;">
                       <input type="checkbox" name="properties[__shopify_send_gift_card_to_recipient]" id="Recipient-checkbox">
-                      Send as a gift
+                      {{ 'products.product.gift_card.send_as_gift' | t }}
                     </label>
                     <div class="recipient-fields" style="display: none; margin-top: 15px; flex-direction:column; gap:10px;">
                       <div class="recipient-field">
-                        <label for="Recipient-email">Recipient email</label>
-                        <input type="email" class="glass-select" name="properties[Recipient email]" placeholder="Recipient email" id="Recipient-email">
+                        <label for="Recipient-email">{{ 'products.product.gift_card.recipient_email' | t }}</label>
+                        <input type="email" class="glass-select" name="properties[Recipient email]" placeholder="{{ 'products.product.gift_card.recipient_email' | t }}" id="Recipient-email">
                       </div>
                       <div class="recipient-field">
-                        <label for="Recipient-name">Recipient name</label>
-                        <input type="text" class="glass-select" name="properties[Recipient name]" placeholder="Recipient name" id="Recipient-name">
+                        <label for="Recipient-name">{{ 'products.product.gift_card.recipient_name' | t }}</label>
+                        <input type="text" class="glass-select" name="properties[Recipient name]" placeholder="{{ 'products.product.gift_card.recipient_name' | t }}" id="Recipient-name">
                       </div>
                       <div class="recipient-field">
-                        <label for="Recipient-message">Message</label>
-                        <textarea class="glass-select" name="properties[Message]" placeholder="Message" id="Recipient-message"></textarea>
+                        <label for="Recipient-message">{{ 'products.product.gift_card.message' | t }}</label>
+                        <textarea class="glass-select" name="properties[Message]" placeholder="{{ 'products.product.gift_card.message' | t }}" id="Recipient-message"></textarea>
                       </div>
                       <div class="recipient-field">
-                        <label for="Recipient-date">Send on date</label>
-                        <input type="date" class="glass-select" name="properties[Send on]" placeholder="Send on date" id="Recipient-date">
+                        <label for="Recipient-date">{{ 'products.product.gift_card.send_on_date' | t }}</label>
+                        <input type="date" class="glass-select" name="properties[Send on]" placeholder="{{ 'products.product.gift_card.send_on_date' | t }}" id="Recipient-date">
                       </div>
                     </div>
                   </div>
@@ -140,7 +140,7 @@
 
                 {% if block.settings.show_quantity_selector %}
                   <div class="quantity-wrapper">
-                    <label for="Quantity">Quantity</label>
+                    <label for="Quantity">{{ 'products.product.quantity' | t }}</label>
                     <div class="quantity-selector">
                       <button type="button" class="qty-btn qty-minus" aria-label="Decrease quantity">−</button>
                       <input type="number" id="Quantity" name="quantity" value="1" min="1" class="qty-input" aria-label="Product quantity">
@@ -152,8 +152,8 @@
                 <div class="installments-box">{{ form | payment_terms }}</div>
 
                 <div class="action-buttons">
-                  <button type="submit" name="add" id="AddToCart" class="btn-primary" {% unless current_variant.available %}disabled="disabled"{% endunless %} data-add-to-cart-text="Add to Cart" data-out-of-stock-text="Out of Stock" data-unavailable-text="Unavailable">
-                    <span id="AddToCartText">{% if current_variant.available %}Add to Cart{% else %}Out of Stock{% endif %}</span>
+                  <button type="submit" name="add" id="AddToCart" class="btn-primary" {% unless current_variant.available %}disabled="disabled"{% endunless %} data-add-to-cart-text="{{ 'products.product.add_to_cart' | t }}" data-out-of-stock-text="{{ 'products.product.sold_out' | t }}" data-unavailable-text="{{ 'products.product.unavailable' | t }}">
+                    <span id="AddToCartText">{% if current_variant.available %}{{ 'products.product.add_to_cart' | t }}{% else %}{{ 'products.product.sold_out' | t }}{% endif %}</span>
                   </button>
                   {% if block.settings.show_dynamic_checkout %}
                     <div class="shopify-payment-wrapper">
@@ -219,8 +219,13 @@ document.addEventListener('DOMContentLoaded', function() {
         
         const btn = document.getElementById('AddToCart');
         const btnText = document.getElementById('AddToCartText');
-        if (matchedVariant.available) { btn.disabled = false; btnText.textContent = btn.dataset.addToCartText || 'Add to Cart'; } 
-        else { btn.disabled = true; btnText.textContent = btn.dataset.outOfStockText || 'Out of Stock'; }
+        if (matchedVariant.available) { 
+          btn.disabled = false; 
+          btnText.textContent = btn.dataset.addToCartText || '{{ "products.product.add_to_cart" | t }}'; 
+        } else { 
+          btn.disabled = true; 
+          btnText.textContent = btn.dataset.outOfStockText || '{{ "products.product.sold_out" | t }}'; 
+        }
         
         const priceElement = document.getElementById('ProductPrice');
         if (typeof Shopify !== 'undefined' && Shopify.formatMoney) { priceElement.innerHTML = Shopify.formatMoney(matchedVariant.price, "{{ cart.currency.symbol }}"); }
@@ -237,7 +242,7 @@ document.addEventListener('DOMContentLoaded', function() {
       } else {
         const btn = document.getElementById('AddToCart');
         btn.disabled = true;
-        document.getElementById('AddToCartText').textContent = btn.dataset.unavailableText || 'Unavailable';
+        document.getElementById('AddToCartText').textContent = btn.dataset.unavailableText || '{{ "products.product.unavailable" | t }}';
       }
     });
   });

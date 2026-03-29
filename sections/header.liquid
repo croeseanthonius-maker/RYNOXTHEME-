@@ -42,14 +42,14 @@
   </div>
   
   <div class="mainNav__actions">
-    <a href="#" class="mainNav__action-link" id="searchToggleBtn" title="Search" aria-label="Toggle Search">
+    <a href="#" class="mainNav__action-link" id="searchToggleBtn" title="{{ 'general.search.search' | t }}" aria-label="{{ 'general.search.toggle_search' | t }}">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.35-4.35"></path></svg>
     </a>
     
-    <a href="{{ routes.account_url }}" class="mainNav__action-link" title="Account" aria-label="Account">
+    <a href="{{ routes.account_url }}" class="mainNav__action-link" title="{{ 'customer.account.title' | t }}" aria-label="{{ 'customer.account.title' | t }}">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
     </a>
-    <a href="{{ routes.cart_url }}" class="mainNav__action-link mainNav__cart" title="Cart" aria-label="Cart">
+    <a href="{{ routes.cart_url }}" class="mainNav__action-link mainNav__cart" title="{{ 'cart.general.title' | t }}" aria-label="{{ 'cart.general.title' | t }}">
       <div class="mainNav__cart-count cart-count">{{ cart.item_count }}</div>
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
     </a>

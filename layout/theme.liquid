@@ -59,7 +59,7 @@
       }
     </style>
 
-    <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
+    <link rel="preconnect" href="//fonts.shopifycdn.com" crossorigin>
 
     {{ 'critical.css' | asset_url | stylesheet_tag: preload: true }}
     {{ 'glass-button.css' | asset_url | stylesheet_tag }}
@@ -170,7 +170,7 @@
 
         {% if settings.global_product_bg_image != blank or settings.global_cart_bg_image != blank or settings.global_collection_bg_image != blank or settings.global_list_collections_bg_image != blank or settings.global_search_bg_image != blank %}
           background-size: cover !important;
-          background-position: center top !important;
+          background-position: {{ settings.global_product_bg_image.presentation.focal_point | default: 'center top' }} !important;
           background-attachment: fixed !important;
           background-repeat: no-repeat !important;
         {% endif %}
@@ -183,7 +183,7 @@
   </head>
 
   <body>
-    <a class="skip-to-content-link" href="#MainContent">Skip to content</a>
+    <a class="skip-to-content-link" href="#MainContent">{{ 'accessibility.skip_to_text' | t }}</a>
 
     {% section 'announcement-bar' %}
     {% sections 'header-group' %}
@@ -196,9 +196,9 @@
     <div id="CartNotification" class="cart-notification">
       <div class="notification-content">
         <span class="success-icon">✓</span>
-        <p>Product added to cart!</p>
+        <p>{{ 'cart.general.added_to_cart' | t }}</p>
       </div>
-      <a href="{{ routes.cart_url }}" class="btn-view-cart">View cart</a>
+      <a href="{{ routes.cart_url }}" class="btn-view-cart">{{ 'cart.general.view_cart' | t }}</a>
       <button id="CloseNotification" class="close-btn">✕</button>
     </div>
 
@@ -252,8 +252,8 @@
           const btnTextElement = submitBtn.querySelector('span');
           const originalText = btnTextElement ? btnTextElement.innerText : (submitBtn.innerText || submitBtn.textContent);
 
-          if (btnTextElement) btnTextElement.innerText = 'ADDING...';
-          else submitBtn.innerText = 'ADDING...';
+          if (btnTextElement) btnTextElement.innerText = '{{ "cart.general.adding" | t }}';
+          else submitBtn.innerText = '{{ "cart.general.adding" | t }}';
           submitBtn.disabled = true;
 
           const formData = new FormData(form);
@@ -266,13 +266,13 @@
           .then(response => {
             if (!response.ok) {
               return response.json().then(errorData => {
-                throw new Error(errorData.description || 'There was an issue adding the item.');
+                throw new Error(errorData.description || '{{ "cart.general.error_adding" | t }}');
               });
             }
             return response.json();
           })
           .then(data => {
-            showNotification('Product added to cart!');
+            showNotification('{{ "cart.general.added_to_cart" | t }}');
             updateCartCount();
           })
           .catch((error) => {

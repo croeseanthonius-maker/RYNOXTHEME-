@@ -1,9 +1,9 @@
 <section class="collection-section">
   <div class="collection-section__container">
     
-    {%- if collection.image -%}
+    {%- if collection.featured_image -%}
       <div class="collection-hero-image-wrapper">
-        {{ collection.image | image_url: width: 1200 | image_tag: alt: collection.title, class: 'collection-hero-image' }}
+        {{ collection.featured_image | image_url: width: 1200 | image_tag: alt: collection.title, class: 'collection-hero-image' }}
       </div>
     {%- endif -%}
 
@@ -83,7 +83,7 @@
           {% render 'product-card', product: product %}
         {% else %}
           <div class="collection-empty-message">
-            <p>Aucun produit n'a été trouvé dans cette collection.</p>
+            <p>{{ 'collections.general.no_matches' | t }}</p>
           </div>
         {% endfor %}
 
@@ -139,7 +139,7 @@
 
 {% schema %}
 {
-  "name": "Collection Grid",
+  "name": "Collection grid",
   "settings": []
 }
 {% endschema %}

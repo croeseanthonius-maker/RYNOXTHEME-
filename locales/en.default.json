@@ -1,177 +1,74 @@
 {
-  "404": {
-    "title": "404",
-    "not_found": "Page not found.",
-    "back_to_shopping": "Back to shopping"
-  },
-  "blog": {
-    "article_comments": "Comments",
-    "article_metadata_html": "{{ date }} by {{ author }}",
-    "comment_form_body": "Comment",
-    "comment_form_email": "Email",
-    "comment_form_name": "Name",
-    "comment_form_submit": "Post",
-    "comment_form_title": "Add a comment"
-  },
-  "cart": {
-    "checkout": "Checkout",
-    "title": "Cart",
-    "update": "Update",
-    "remove": "Remove",
-    "general": {
-      "title": "Shopping Cart",
-      "items": "items",
-      "empty": "Your cart is empty",
-      "continue_shopping": "Back to shop",
-      "summary": "Summary",
-      "shipping": "Shipping",
-      "standard_delivery": "Standard Delivery - Free",
-      "discount_code": "Discount Code",
-      "enter_code": "Enter your code",
-      "total": "Total Price",
-      "checkout": "Checkout"
+  "general": {
+    "search": {
+      "search": "Search",
+      "placeholder": "Search...",
+      "toggle_search": "Toggle Search"
     }
   },
-  "customers": {
-    "login": {
-      "email": "Email",
-      "password": "Password",
-      "submit": "Sign in",
-      "title": "Login"
+  "accessibility": {
+    "skip_to_text": "Skip to content"
+  },
+  "customer": {
+    "account": {
+      "title": "Account"
     }
   },
   "collections": {
-    "title": "Collections"
+    "title": "Collections",
+    "general": {
+      "no_matches": "No products found in this collection."
+    }
   },
-  "gift_card": {
-    "add_to_apple_wallet": "Add to Apple Wallet",
-    "card": "Gift card",
-    "expired": "This gift card has expired",
-    "expires_on": "Expires on {{ expires_on }}",
-    "use_at_checkout": "Use this gift card at checkout"
+  "templates": {
+    "search": {
+      "no_results": "No results found for \"{{ terms }}\"."
+    }
+  },
+  "products": {
+    "out_of_stock": "Out of Stock",
+    "add_to_cart": "Add to Cart",
+    "product": {
+      "quantity": "Quantity",
+      "add_to_cart": "Add to Cart",
+      "sold_out": "Out of Stock",
+      "unavailable": "Unavailable",
+      "gift_card": {
+        "send_as_gift": "Send as a gift",
+        "recipient_email": "Recipient email",
+        "recipient_name": "Recipient name",
+        "message": "Message",
+        "send_on_date": "Send on date"
+      }
+    }
+  },
+  "cart": {
+    "general": {
+      "title": "YOUR CART",
+      "promo": "PROMO",
+      "remove": "REMOVE",
+      "order_summary": "ORDER SUMMARY",
+      "taxes_included": "Taxes included.",
+      "subtotal": "Subtotal",
+      "estimated_shipping": "Estimated shipping",
+      "calculated_at_checkout": "Calculated at checkout",
+      "special_instructions": "Special instructions (Optional)",
+      "grand_total": "Grand Total",
+      "secure_checkout": "SECURE CHECKOUT",
+      "empty": "Your cart is currently empty.",
+      "browse_products": "Browse products",
+      "added_to_cart": "Product added to cart!",
+      "view_cart": "View cart",
+      "adding": "ADDING...",
+      "error_adding": "There was an issue adding the item."
+    }
   },
   "password": {
-    "title": "This shop is private",
+    "title": "Opening Soon",
     "password": "Password",
     "enter": "Enter"
   },
   "search": {
-    "title": "Search",
-    "placeholder": "Search articles, pages, or products",
-    "submit": "Search",
-    "no_results_html": "No results found for {{ terms }}",
-    "results_for_html": "{{ count }} results found for {{ terms }}"
-  },
-  "products": {
-    "add_to_cart": "Add to Cart",
-    "in_stock": "In Stock",
-    "out_of_stock": "Out of Stock",
-    "color": "Color",
-    "decrease_quantity": "Decrease quantity",
-    "increase_quantity": "Increase quantity",
-    "from": "From"
-  },
-  "sections": {
-    "hero": {
-      "name": "Hero",
-      "settings": {
-        "bg_image": "Background image",
-        "page_title": "Page title",
-        "section_title": "Section title",
-        "subtitle": "Section description",
-        "padding_top": "Top padding",
-        "padding_bottom": "Bottom padding"
-      }
-    },
-    "newsletter": {
-      "no_thanks": "No thanks"
-    }
-  },
-  "general": {
-    "product_label": "Product",
-    "related_products": "Related products",
-    "typography": "Typography",
-    "fonts": "Fonts",
-    "primary": "Primary font",
-    "layout": "Layout",
-    "colors": "Colors",
-    "footer": "Footer",
-    "nav": {
-      "home": "Home",
-      "categories": "Categories",
-      "promotions": "Promotions",
-      "new": "New Arrivals",
-      "brands": "Brands",
-      "all_categories": "View all categories"
-    },
-    "category": {
-      "men": "Men",
-      "women": "Women",
-      "kids": "Kids",
-      "equipment": "Equipment"
-    },
-    "product": {
-      "snowboards": "Snowboards",
-      "bindings": "Bindings",
-      "boots": "Boots",
-      "clothing": "Clothing",
-      "accessories": "Accessories",
-      "helmets": "Helmets and Protection"
-    },
-    "search": {
-      "label": "Search",
-      "placeholder": "Search for a product...",
-      "search": "Search"
-    },
-    "account": {
-      "label": "Account"
-    },
-    "cart": {
-      "label": "Cart"
-    },
-    "menu": {
-      "label": "Navigation menu"
-    }
-  },
-  "templates": {
-    "contact": {
-      "form": {
-        "name": "Name",
-        "email": "Email",
-        "comment": "Comment",
-        "post_success": "Thanks for contacting us. We'll get back to you as soon as possible."
-      }
-    }
-  },
-  "labels": {
-    "title": "Title",
-    "products_limit": "Number of products",
-    "empty_text": "Empty text",
-    "color_selector": "Color selector",
-    "default_color": "Default circle color",
-    "color_variant_1": "Color for variant 1",
-    "color_variant_2": "Color for variant 2",
-    "color_variant_3": "Color for variant 3",
-    "color_variant_4": "Color for variant 4",
-    "color_variant_5": "Color for variant 5",
-    "related_products_section": "Related products",
-    "show_related_products": "Show related products",
-    "related_title": "Related products title",
-    "badge_settings": "Badge settings",
-    "show_badge": "Show badge",
-    "badge_text": "Badge text",
-    "quantity": "Quantity",
-    "variant": "Variant",
-    "page_width": "Page width",
-    "page_margin": "Page margin",
-    "background": "Background",
-    "foreground": "Foreground",
-    "input_corner_radius": "Input corner radius"
-  },
-  "options": {
-    "page_width": {
-      "narrow": "Narrow",
-      "wide": "Wide"
-    }
+    "title": "Search Results"
   }
 }

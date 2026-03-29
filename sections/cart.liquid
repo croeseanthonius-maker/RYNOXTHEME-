@@ -2,7 +2,7 @@
   <div class="page-width">
     
     <div class="cart-header">
-      <h1 class="cart-title">YOUR CART</h1>
+      <h1 class="cart-title">{{ 'cart.general.title' | t }}</h1>
     </div>
 
     {% if cart.item_count > 0 %}
@@ -15,7 +15,7 @@
               
               <div class="item-media">
                 {%- if item.variant.compare_at_price > item.variant.price or item.original_line_price > item.final_line_price -%}
-                  <span class="promo-badge">PROMO</span>
+                  <span class="promo-badge">{{ 'cart.general.promo' | t }}</span>
                 {%- endif -%}
                 
                 {% if item.image %}
@@ -98,7 +98,7 @@
 
               <div class="item-total-action">
                 <span class="line-total-price">{{ item.final_line_price | money }}</span>
-                <a href="{{ item.url_to_remove }}" class="remove-btn">REMOVE</a>
+                <a href="{{ item.url_to_remove }}" class="remove-btn">{{ 'cart.general.remove' | t }}</a>
               </div>
 
             </div>
@@ -111,14 +111,14 @@
         </div>
 
         <div class="cart-summary-column dark-glass-panel">
-          <h2 class="summary-title">ORDER SUMMARY</h2>
+          <h2 class="summary-title">{{ 'cart.general.order_summary' | t }}</h2>
           
           {%- if cart.taxes_included -%}
-            <p class="tax-note text-muted">Taxes included</p>
+            <p class="tax-note text-muted">{{ 'cart.general.taxes_included' | t }}</p>
           {%- endif -%}
 
           <div class="summary-line">
-            <span>Subtotal</span>
+            <span>{{ 'cart.general.subtotal' | t }}</span>
             <span class="summary-price">{{ cart.original_total_price | money }}</span>
           </div>
 
@@ -129,7 +129,7 @@
                   <li class="summary-line text-success fw-bold">
                     <span>
                        <svg aria-hidden="true" focusable="false" role="presentation" class="icon icon-discount" viewBox="0 0 12 12" width="12" height="12" style="margin-right:4px;"><path fill-rule="evenodd" clip-rule="evenodd" d="M7 0h3a2 2 0 012 2v3a1 1 0 01-.3.7l-6 6a1 1 0 01-1.4 0l-4-4a1 1 0 010-1.4l6-6A1 1 0 017 0zm2 2a1 1 0 102 0 1 1 0 00-2 0z" fill="currentColor"></path></svg>
-                       {{ discount.title }}
+                        {{ discount.title }}
                     </span>
                     <span>-{{ discount.total_allocated_amount | money }}</span>
                   </li>
@@ -139,29 +139,29 @@
           {%- endif -%}
           
           <div class="summary-line text-muted pb-3 border-bottom border-secondary">
-            <span>Estimated shipping</span>
-            <span>Calculated at checkout</span>
+            <span>{{ 'cart.general.estimated_shipping' | t }}</span>
+            <span>{{ 'cart.general.calculated_at_checkout' | t }}</span>
           </div>
 
           {% if section.settings.show_cart_note %}
             <div class="cart-note-wrapper">
-              <label for="Cart-note" class="cart-note-label">Special instructions (Optional)</label>
-              <textarea name="note" class="cart-note-input" id="Cart-note" placeholder="Add a note to your order...">{{ cart.note }}</textarea>
+              <label for="Cart-note" class="cart-note-label">{{ 'cart.general.special_instructions' | t }}</label>
+              <textarea name="note" class="cart-note-input" id="Cart-note" placeholder="...">{{ cart.note }}</textarea>
             </div>
           {% endif %}
 
           <div class="summary-grand-total">
             <div class="grand-total-label">
-              <span>Grand Total</span>
+              <span>{{ 'cart.general.grand_total' | t }}</span>
               {%- if cart.taxes_included -%}
-                <span class="tax-note-small text-muted" style="display:block; font-size: 0.8rem; font-weight: 400;">Taxes included.</span>
+                <span class="tax-note-small text-muted" style="display:block; font-size: 0.8rem; font-weight: 400;">{{ 'cart.general.taxes_included' | t }}</span>
               {%- endif -%}
             </div>
             <span class="grand-total-price">{{ cart.total_price | money }}</span>
           </div>
 
           <button type="submit" id="checkout" class="btn-primary-checkout" name="checkout" {% if cart == empty %} disabled {% endif %}>
-            SECURE CHECKOUT
+            {{ 'cart.general.secure_checkout' | t }}
           </button>
 
           {%- if additional_checkout_buttons -%}
@@ -179,7 +179,7 @@
 
     {% else %}
       <div class="empty-cart-message dark-glass-panel">
-        <h2>Your cart is currently empty.</h2>
+        <h2>{{ 'cart.general.empty' | t }}</h2>
         {% assign empty_url = section.settings.empty_cart_button_url | default: routes.all_products_collection_url %}
         {% assign empty_text = section.settings.empty_cart_button_text | default: 'Browse products' %}
         <a href="{{ empty_url }}" class="btn-primary-checkout" style="max-width: 300px; text-decoration:none;">{{ empty_text }}</a>
@@ -565,7 +565,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 {% schema %}
 {
-  "name": "Cart Section",
+  "name": "Cart section",
   "settings": [
     {
       "type": "header",
