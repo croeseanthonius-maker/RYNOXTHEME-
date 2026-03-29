@@ -52,7 +52,7 @@
               <div class="unit-price" id="UnitPrice" {% unless current_variant.unit_price_measurement %}style="display:none;"{% endunless %}>
                 {{ current_variant.unit_price | money }} / {% if current_variant.unit_price_measurement.reference_value != 1 %}{{ current_variant.unit_price_measurement.reference_value }}{% endif %}{{ current_variant.unit_price_measurement.reference_unit }}
               </div>
-              {%- if cart.taxes_included -%}<div class="tax-note">Taxes included.</div>{%- endif -%}
+              {%- if cart.taxes_included -%}<div class="tax-note">{{ 'products.product.taxes_included' | t }}</div>{%- endif -%}
             </div>
           {%- when 'description' -%}
             <div class="product-description rte" {{ block.shopify_attributes }}>{{ product.description }}</div>
@@ -142,9 +142,9 @@
                   <div class="quantity-wrapper">
                     <label for="Quantity">{{ 'products.product.quantity' | t }}</label>
                     <div class="quantity-selector">
-                      <button type="button" class="qty-btn qty-minus" aria-label="Decrease quantity">−</button>
-                      <input type="number" id="Quantity" name="quantity" value="1" min="1" class="qty-input" aria-label="Product quantity">
-                      <button type="button" class="qty-btn qty-plus" aria-label="Increase quantity">+</button>
+                      <button type="button" class="qty-btn qty-minus" aria-label="{{ 'accessibility.decrease_quantity' | t }}">−</button>
+                      <input type="number" id="Quantity" name="quantity" value="1" min="1" class="qty-input" aria-label="{{ 'accessibility.product_quantity' | t }}">
+                      <button type="button" class="qty-btn qty-plus" aria-label="{{ 'accessibility.increase_quantity' | t }}">+</button>
                     </div>
                   </div>
                 {% endif %}
@@ -167,7 +167,7 @@
             <div id="StoreAvailability" class="pickup-availability" {{ block.shopify_attributes }}>
               {% if current_variant.store_availabilities.size > 0 %}
                 {% assign availability = current_variant.store_availabilities | first %}
-                {% if availability.available %}✓ Pickup available at {{ availability.location.name }}{% else %}✕ Unavailable for pickup{% endif %}
+                {% if availability.available %}✓ {{ 'products.product.pickup_available' | t }} {{ availability.location.name }}{% else %}✕ {{ 'products.product.pickup_unavailable' | t }}{% endif %}
               {% endif %}
             </div>
         {%- endcase -%}
@@ -208,6 +208,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
   selectors.forEach(selector => {
     selector.addEventListener('change', function() {
+      const formatMoney = (cents) => {
+        return new Intl.NumberFormat('{{ request.locale.iso_code }}', {
+          style: 'currency',
+          currency: '{{ cart.currency.iso_code }}'
+        }).format(cents / 100);
+      };
+
       let currentOptions = [];
       document.querySelectorAll('.single-option-selector').forEach(sel => {
         if(sel.type === 'radio') { if(sel.checked) currentOptions.push(sel.value); } else { currentOptions.push(sel.value); }
@@ -228,12 +235,16 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         const priceElement = document.getElementById('ProductPrice');
-        if (typeof Shopify !== 'undefined' && Shopify.formatMoney) { priceElement.innerHTML = Shopify.formatMoney(matchedVariant.price, "{{ cart.currency.symbol }}"); }
+        if (priceElement) {
+          priceElement.innerHTML = formatMoney(matchedVariant.price);
+        }
         
         const compareElement = document.getElementById('ComparePrice');
-        if (matchedVariant.compare_at_price > matchedVariant.price) {
-          if (typeof Shopify !== 'undefined' && Shopify.formatMoney) { compareElement.innerHTML = '<s>' + Shopify.formatMoney(matchedVariant.compare_at_price, "{{ cart.currency.symbol }}") + '</s>'; }
-        } else { compareElement.innerHTML = ''; }
+        if (compareElement) {
+          if (matchedVariant.compare_at_price > matchedVariant.price) {
+            compareElement.innerHTML = '<s>' + formatMoney(matchedVariant.compare_at_price) + '</s>';
+          } else { compareElement.innerHTML = ''; }
+        }
         
         if (matchedVariant.featured_media) {
           const matchingThumb = document.querySelector(`.thumbnail[data-media-id="${matchedVariant.featured_media.id}"]`);
