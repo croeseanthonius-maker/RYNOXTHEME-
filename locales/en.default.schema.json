@@ -39,9 +39,18 @@
   "labels": {
     "alignment": "Alignment",
     "background": "Background",
+    "background_color": "Background color",
+    "background_image": "Background image",
+    "badge_background": "Badge background",
     "badge_settings": "Badge settings",
     "badge_text": "Badge text",
+    "brand": "Brand",
+    "button_background": "Button background",
+    "button_background_hover": "Button background (hover)",
     "button_settings": "Button settings",
+    "button_text": "Button text",
+    "card_background": "Card background",
+    "cart_page": "Cart page background",
     "collection": "Collection",
     "collection_link_text": "Collection link text",
     "collection_1": "Collection 1",
@@ -51,6 +60,7 @@
     "collection_5": "Collection 5",
     "collection_6": "Collection 6",
     "collections": "Collections",
+    "collections_list": "List collections background",
     "color_selector": "Color selector",
     "default_color": "Default circle color",
     "color_variant_1": "Color for variant 1",
@@ -59,19 +69,30 @@
     "color_variant_4": "Color for variant 4",
     "color_variant_5": "Color for variant 5",
     "empty_text": "Empty text",
+    "favicon": "Favicon",
+    "font_body": "Body font",
+    "font_heading": "Heading font",
     "foreground": "Foreground",
+    "foreground_color": "Text (foreground) color",
+    "global_colors": "Global colors",
     "grid_gap": "Grid spacing",
     "grid_item_width": "Grid item width",
+    "home_page": "Home page background",
     "input_corner_radius": "Input corner radius",
     "layout_direction": "Layout direction",
+    "logo": "Logo",
     "menu": "Menu",
     "padding": "Padding",
     "page_margin": "Page margin",
     "page_width": "Page width",
+    "primary_accent": "Primary accent",
+    "product_page": "Product page background",
     "products_limit": "Number of products",
     "quantity": "Quantity",
     "related_products_section": "Related products",
     "related_title": "Related products title",
+    "search_page": "Search page background",
+    "secondary_accent": "Secondary accent",
     "section_subtitle": "Section subtitle",
     "section_title": "Section title",
     "show_badge": "Show badge",
@@ -79,9 +100,18 @@
     "show_payment_icons": "Show payment icons",
     "show_related_products": "Show related products",
     "show_view_all_button": "Show view all button",
+    "social_facebook": "Facebook",
+    "social_instagram": "Instagram",
+    "social_media": "Social media",
+    "social_pinterest": "Pinterest",
+    "social_tiktok": "TikTok",
+    "social_twitter": "X (Twitter)",
+    "social_youtube": "YouTube",
     "text_style": "Text style",
     "text": "Text",
     "title": "Title",
+    "typography": "Typography",
+    "ui_elements_colors": "UI elements colors",
     "variant": "Variant",
     "view_all_button": "View all button text"
   },
@@ -107,6 +137,29 @@
       "title": "Title",
       "subtitle": "Subtitle",
       "normal": "Normal text"
+    }
+  },
+  "sections": {
+    "announcement-bar": {
+      "name": "Announcement Bar",
+      "settings": {
+        "show_announcement": {
+          "label": "Enable Announcement Bar"
+        },
+        "text": {
+          "label": "Announcement Text",
+          "default": "Welcome to our store"
+        },
+        "link": {
+          "label": "Banner Link"
+        },
+        "text_color": {
+          "label": "Text Color"
+        },
+        "speed": {
+          "label": "Scrolling Speed"
+        }
+      }
     }
   }
 }

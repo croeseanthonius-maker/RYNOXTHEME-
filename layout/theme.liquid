@@ -59,11 +59,11 @@
       }
     </style>
 
-    <link rel="preconnect" href="//fonts.shopifycdn.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
 
     {{ 'critical.css' | asset_url | stylesheet_tag: preload: true }}
-    {{ 'glass-button.css' | asset_url | stylesheet_tag }}
-    {{ 'cart-notification.css' | asset_url | stylesheet_tag }}
+    {{ 'glass-button.css' | asset_url | stylesheet_tag: preload: true }}
+    {{ 'cart-notification.css' | asset_url | stylesheet_tag: preload: true }}
 
     {% render 'meta-tags' %}
     {{ content_for_header }}
@@ -72,22 +72,22 @@
   {%- capture body_styles -%}
     {%- if template == 'index' -%}
       --bg-color: {{ settings.home_bg_color }};
-      {% if settings.home_bg_image %}--bg-image: url('{{ settings.home_bg_image | image_url: width: 2000 }}');{% endif %}
+      {% if settings.home_bg_image %}--bg-image: url('{{ settings.home_bg_image | image_url: width: 1200 }}');{% endif %}
     {%- elsif template.name == 'product' -%}
       --bg-color: {{ settings.global_product_bg_color }};
-      {% if settings.global_product_bg_image %}--bg-image: url('{{ settings.global_product_bg_image | image_url: width: 2000 }}');{% endif %}
+      {% if settings.global_product_bg_image %}--bg-image: url('{{ settings.global_product_bg_image | image_url: width: 1200 }}');{% endif %}
     {%- elsif template.name == 'cart' -%}
       --bg-color: {{ settings.global_cart_bg_color }};
-      {% if settings.global_cart_bg_image %}--bg-image: url('{{ settings.global_cart_bg_image | image_url: width: 2000 }}');{% endif %}
+      {% if settings.global_cart_bg_image %}--bg-image: url('{{ settings.global_cart_bg_image | image_url: width: 1200 }}');{% endif %}
     {%- elsif template.name == 'collection' -%}
       --bg-color: {{ settings.global_collection_bg_color }};
-      {% if settings.global_collection_bg_image %}--bg-image: url('{{ settings.global_collection_bg_image | image_url: width: 2000 }}');{% endif %}
+      {% if settings.global_collection_bg_image %}--bg-image: url('{{ settings.global_collection_bg_image | image_url: width: 1200 }}');{% endif %}
     {%- elsif template.name == 'list-collections' -%}
       --bg-color: {{ settings.global_list_collections_bg_color }};
-      {% if settings.global_list_collections_bg_image %}--bg-image: url('{{ settings.global_list_collections_bg_image | image_url: width: 2000 }}');{% endif %}
+      {% if settings.global_list_collections_bg_image %}--bg-image: url('{{ settings.global_list_collections_bg_image | image_url: width: 1200 }}');{% endif %}
     {%- elsif template.name == 'search' -%}
       --bg-color: {{ settings.global_search_bg_color }};
-      {% if settings.global_search_bg_image %}--bg-image: url('{{ settings.global_search_bg_image | image_url: width: 2000 }}');{% endif %}
+      {% if settings.global_search_bg_image %}--bg-image: url('{{ settings.global_search_bg_image | image_url: width: 1200 }}');{% endif %}
     {%- endif -%}
   {%- endcapture -%}
 
@@ -111,99 +111,7 @@
       <button id="CloseNotification" class="close-btn">✕</button>
     </div>
 
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      const notification = document.getElementById('CartNotification');
-      const closeNotifBtn = document.getElementById('CloseNotification');
-
-      function showNotification(message, isError = false) {
-        if (!notification) return;
-
-        const notifText = notification.querySelector('p');
-        const notifIcon = notification.querySelector('.success-icon');
-
-        notifText.textContent = message;
-      
-        if (isError) {
-          notifIcon.textContent = '✕';
-        } else {
-          notifIcon.textContent = '✓';
-        }
-
-        notification.classList.add('show');
-        setTimeout(() => {
-          notification.classList.remove('show');
-        }, 5000);
-      }
-
-      function updateCartCount() {
-        fetch(window.Shopify.routes.root + 'cart.js')
-          .then(res => res.json())
-          .then(cart => {
-            const cartCounters = document.querySelectorAll('.cart-count-bubble, .cart-count, [data-cart-count], .cart-icon-count, .mainNav__cart-count');
-            cartCounters.forEach(counter => {
-              counter.textContent = cart.item_count;
-              if (cart.item_count > 0) {
-                counter.classList.remove('hidden', 'd-none');
-              }
-            });
-          })
-          .catch(e => console.error(e));
-      }
-
-      const addToCartForms = document.querySelectorAll('form[action$="/cart/add"]');
-      addToCartForms.forEach(form => {
-        form.addEventListener('submit', function(e) {
-          e.preventDefault();
-
-          const submitBtn = form.querySelector('button[type="submit"], input[type="submit"]');
-          if (!submitBtn) return;
-
-          const btnTextElement = submitBtn.querySelector('span');
-          const originalText = btnTextElement ? btnTextElement.innerText : (submitBtn.innerText || submitBtn.textContent);
-
-          if (btnTextElement) btnTextElement.innerText = '{{ "cart.general.adding" | t }}';
-          else submitBtn.innerText = '{{ "cart.general.adding" | t }}';
-          submitBtn.disabled = true;
-
-          const formData = new FormData(form);
-
-          fetch(window.Shopify.routes.root + 'cart/add.js', {
-            method: 'POST',
-            body: formData,
-            headers: { 'X-Requested-With': 'XMLHttpRequest' }
-          })
-          .then(response => {
-            if (!response.ok) {
-              return response.json().then(errorData => {
-                throw new Error(errorData.description || '{{ "cart.general.error_adding" | t }}');
-              });
-            }
-            return response.json();
-          })
-          .then(data => {
-            showNotification('{{ "cart.general.added_to_cart" | t }}');
-            updateCartCount();
-          })
-          .catch((error) => {
-            showNotification(error.message, true);
-          })
-          .finally(() => {
-            if (btnTextElement) {
-              btnTextElement.innerText = originalText;
-            } else {
-              submitBtn.innerText = originalText;
-            }
-            submitBtn.disabled = false;
-          });
-        });
-      });
-
-      if (closeNotifBtn) {
-        closeNotifBtn.addEventListener('click', () => notification.classList.remove('show'));
-      }
-    });
-    </script>
+    <script defer src="{{ 'cart-notification.js' | asset_url }}"></script>
     
     {% section 'newsletter-popup' %}
   </body>

@@ -67,6 +67,8 @@
 </nav>
 
 {% stylesheet %}
+  /* Padding par défaut pour que le header ne cache pas le contenu du site */
+  body { padding-top: 56px; }
   .mainNav { width: 100vw; margin-left: calc(-50vw + 50%); height: 56px; position: fixed; top: 0; left: 0; z-index: 100; display: flex; justify-content: space-between; align-items: center; color: var(--logo-color); text-transform: uppercase; padding: 0 var(--logo-padding); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); background: rgba(255, 255, 255, 0.15) !important; border-bottom: 1px solid rgba(255, 255, 255, 0.3) !important; box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.18) !important; }
   .mainNav__search-dropdown { position: absolute; top: 100%; left: 0; width: 100%; padding: 20px; background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border-bottom: 1px solid rgba(255, 255, 255, 0.4); box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1); opacity: 0; visibility: hidden; transform: translateY(-10px); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 99; }
   .mainNav__search-dropdown.is-active { opacity: 1; visibility: visible; transform: translateY(0); }

@@ -29,6 +29,7 @@
     }
   },
   "products": {
+    "from": "From",
     "in_stock": "In Stock",
     "out_of_stock": "Out of Stock",
     "add_to_cart": "Add to Cart",
