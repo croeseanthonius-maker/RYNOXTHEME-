@@ -53,11 +53,11 @@
       <div class="mainNav__cart-count cart-count">{{ cart.item_count }}</div>
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
     </a>
+
+    <a href="#" class="mainNav__icon" id="mobileMenuToggle" aria-label="Toggle menu" aria-expanded="false" role="button">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+    </a>
   </div>
-  
-  <button class="mainNav__icon" id="mobileMenuToggle" aria-label="Toggle menu" aria-expanded="false">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
-  </button>
 
   <div class="mainNav__search-dropdown" id="searchDropdown">
     <div class="mainNav__search-wrapper">
@@ -67,17 +67,19 @@
 </nav>
 
 {% stylesheet %}
-  /* Padding par défaut pour que le header ne cache pas le contenu du site */
   body { padding-top: 56px; }
   .mainNav { width: 100vw; margin-left: calc(-50vw + 50%); height: 56px; position: fixed; top: 0; left: 0; z-index: 100; display: flex; justify-content: space-between; align-items: center; color: var(--logo-color); text-transform: uppercase; padding: 0 var(--logo-padding); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); background: rgba(255, 255, 255, 0.15) !important; border-bottom: 1px solid rgba(255, 255, 255, 0.3) !important; box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.18) !important; }
   .mainNav__search-dropdown { position: absolute; top: 100%; left: 0; width: 100%; padding: 20px; background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border-bottom: 1px solid rgba(255, 255, 255, 0.4); box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1); opacity: 0; visibility: hidden; transform: translateY(-10px); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 99; }
   .mainNav__search-dropdown.is-active { opacity: 1; visibility: visible; transform: translateY(0); }
   .mainNav__search-wrapper { max-width: 600px; margin: 0 auto; }
   
-  /* Accessibilité Focus général */
   a:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid var(--logo-color); outline-offset: 4px; border-radius: 4px; }
 
-  @media screen and (max-width: 799px) { .mainNav { padding: 0 16px; } .mainNav__search-dropdown { padding: 15px; } }
+  @media screen and (max-width: 799px) { 
+    .mainNav { padding: 0 12px; } 
+    .mainNav__search-dropdown { padding: 15px; } 
+    .mainNav__actions { gap: 12px !important; }
+  }
   
   .mainNav__logo { font-weight: 800; letter-spacing: 1px; font-size: 18px; color: #000000 !important; flex-shrink: 0; text-decoration: none !important; cursor: pointer; transition: color 0.3s ease; display: flex; align-items: center; }
   .mainNav__logo:hover { opacity: 0.8; text-decoration: none !important; }
@@ -101,13 +103,11 @@
   .mainNav__dropdown-icon { width: 14px; height: 14px; stroke-width: 2; transition: transform 0.3s ease; }
   .mainNav__link-wrapper { position: relative; }
   
-  /* Accessibilité : Hover ET Focus-within */
   .mainNav__link-wrapper:hover .mainNav__dropdown-icon,
   .mainNav__link-wrapper:focus-within .mainNav__dropdown-icon { transform: rotate(180deg); }
   
   .mainNav__megamenu { position: absolute; top: 100%; left: 0; right: auto; backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); background: rgba(255, 255, 255, 0.15); border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 8px; box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.18); opacity: 0; visibility: hidden; transform: translateY(-10px); transition: all 0.3s ease; pointer-events: none; z-index: 1000; min-width: 300px; margin-top: 0px; padding-top: 8px; }
   
-  /* Accessibilité : Ouverture au Hover ET Focus-within */
   .mainNav__link-wrapper:hover .mainNav__megamenu,
   .mainNav__link-wrapper:focus-within .mainNav__megamenu { opacity: 1; visibility: visible; transform: translateY(0); pointer-events: auto; }
   
@@ -119,10 +119,28 @@
   .mainNav__megamenu-link { font-size: 13px; color: rgba(0, 0, 0, 0.7); text-decoration: none !important; transition: all 0.3s ease; padding: 4px 0; display: block; }
   .mainNav__megamenu-link:hover { color: #3b82f6; padding-left: 4px; text-decoration: none !important; }
   
-  .mainNav__icon { width: 40px; height: 40px; background-size: contain; background-repeat: no-repeat; background-position: center; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #000000 !important; border: none; background-color: transparent; padding: 8px; z-index: 102; transition: opacity 0.3s ease, color 0.3s ease, transform 0.3s ease; }
-  .mainNav__icon:hover { opacity: 0.7; transform: scale(1.1); }
+  .mainNav__icon { 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    background: transparent !important; 
+    background-color: transparent !important; 
+    border: none !important; 
+    padding: 0; 
+    margin: 0; 
+    box-shadow: none !important; 
+    cursor: pointer; 
+    color: var(--logo-color) !important; 
+    text-decoration: none !important;
+    appearance: none; 
+    -webkit-appearance: none; 
+    -webkit-tap-highlight-color: transparent; 
+    transition: all 0.3s ease; 
+    outline: none; 
+  }
+  .mainNav__icon:hover { transform: scale(1.1); opacity: 0.7; text-decoration: none !important; }
   .mainNav__icon.active { color: #000000 !important; }
-  .mainNav__icon svg { width: 100%; height: 100%; stroke: currentColor; }
+  .mainNav__icon svg { width: 20px; height: 20px; stroke-width: 1.5; stroke: currentColor; }
   
   @media screen and (min-width: 800px) { .mainNav__icon { display: none; } }
   @media screen and (max-width: 799px) { 
@@ -173,6 +191,7 @@
 
     if(menuToggle && mainNav) {
       menuToggle.addEventListener('click', function(e){
+        e.preventDefault(); // Empêche le saut vers le haut de la page (comportement d'un lien #)
         e.stopPropagation();
         var isExpanded = mainNav.classList.contains('mainNav--active');
         mainNav.classList.toggle('mainNav--active');

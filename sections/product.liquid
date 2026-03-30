@@ -1,3 +1,191 @@
+<style>
+  .snowpeak-product-page { width: 100vw; padding: 120px 0 20px 0; background-attachment: fixed; background-repeat: no-repeat; background-size: cover; position: relative; left: 50%; right: 50%; margin-left: -50vw; margin-right: -50vw; }
+  .page-width { width: 100%; margin: 0 auto; padding: 0 20px; max-width: 1200px; }
+  .product-grid { width: 100%; display: grid; grid-template-columns: 1.2fr 1fr; gap: 40px; align-items: start; margin-bottom: 0px; }
+  
+  .product-media-gallery { position: relative; z-index: 10; }
+  .product-info-panel { position: relative; z-index: 20; overflow: visible !important; }
+  
+  .glass-box { background: rgba(255, 255, 255, 0.25); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.6); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); border-radius: 1.5rem; padding: 30px; }
+  .main-image-container { width: 100%; aspect-ratio: 4/3; display: flex; justify-content: center; align-items: center; margin-bottom: 20px; border-radius: 12px; overflow: hidden; padding: 15px; }
+  .main-product-media { width: 100%; height: 100%; object-fit: contain; object-position: center; display: block; }
+  
+  .thumbnails-container { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 10px; flex-wrap: nowrap; scroll-behavior: smooth; scroll-snap-type: x mandatory; scrollbar-width: none; -ms-overflow-style: none; }
+  .thumbnails-container::-webkit-scrollbar { display: none; }
+  .thumbnail { width: calc((100% - 45px) / 4); aspect-ratio: 1 / 1; height: auto; flex-shrink: 0; scroll-snap-align: start; border-radius: 12px; cursor: pointer; position: relative; padding: 8px; transition: all 0.3s ease; background: rgba(255, 255, 255, 0.25); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.6); box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08); }
+  .thumbnail.active-thumb { border-color: #000; transform: translateY(-4px); box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15); }
+  .thumbnail img { width: 100%; height: 100%; object-fit: cover; border-radius: 6px; }
+  .media-icon { position: absolute; top: -5px; right: -5px; background: #000; color: white; font-size: 11px; padding: 4px 6px; border-radius: 6px; box-shadow: 0 2px 5px rgba(0,0,0,0.3); }
+  
+  .vendor { font-size: 0.85rem; color: #555; text-transform: uppercase; margin-bottom: 5px; }
+  .product-title { font-size: 2.5rem; font-weight: 800; margin: 0 0 20px 0; line-height: 1.1; color: #111; }
+  .price-block { margin-bottom: 25px; }
+  .current-price { font-size: 1.8rem; font-weight: 700; color: #111; }
+  .compare-price { font-size: 1.1rem; color: #777; margin-left: 10px; }
+  .tax-note, .unit-price { font-size: 0.85rem; color: #555; margin-top: 5px; }
+  .product-description { line-height: 1.6; margin-bottom: 30px; color: #333; max-height: 220px; overflow-y: auto; padding-right: 15px; }
+  .product-description::-webkit-scrollbar { width: 6px; }
+  .product-description::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.2); border-radius: 8px; }
+  .product-description::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.3); border-radius: 8px; }
+  
+  .product-form { position: relative; z-index: 50; overflow: visible !important; }
+  .variant-selectors, .selector-wrapper, .color-selector-wrapper { margin-bottom: 20px; position: relative; overflow: visible !important; }
+  
+  .selector-wrapper label, .color-selector-wrapper > label, .quantity-wrapper label, .recipient-field label { display: block; font-weight: 600; margin-bottom: 8px; font-size: 0.9rem; text-transform: uppercase; }
+  .recipient-field { width: 100%; }
+
+  .snowpeak-product-page input.glass-input,
+  .snowpeak-product-page textarea.glass-input { width: 100% !important; background: rgba(255, 255, 255, 0.25) !important; backdrop-filter: blur(16px) !important; -webkit-backdrop-filter: blur(16px) !important; border: 1px solid rgba(255, 255, 255, 0.4) !important; box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1) !important; border-radius: 8px !important; font-size: 1rem !important; color: #111 !important; outline: none !important; transition: all 0.3s ease !important; padding: 12px 15px !important; box-sizing: border-box; }
+
+  /* --- MENU DÉROULANT VERRE FUMÉ ÉPURÉ --- */
+  .custom-variant-dropdown { position: relative; display: block; width: 100%; outline: none; z-index: 100; }
+  .custom-variant-dropdown:hover, .custom-variant-dropdown:focus-within { z-index: 99999; }
+
+  .glass-dropdown-toggle { 
+    width: 100%;
+    background: rgba(15, 15, 15, 0.75) !important; /* Verre fumé profond */
+    backdrop-filter: blur(20px) !important; -webkit-backdrop-filter: blur(20px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important; 
+    color: #fff !important; 
+    padding: 12px 20px !important; 
+    border-radius: 50px !important; 
+    font-size: 14px !important; 
+    font-weight: 600 !important; 
+    display: flex !important; 
+    justify-content: space-between !important;
+    align-items: center !important; 
+    gap: 8px !important; 
+    cursor: pointer !important; 
+    transition: all 0.3s ease !important; 
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important;
+    box-sizing: border-box !important;
+  }
+  
+  .custom-variant-dropdown:hover .glass-dropdown-toggle, 
+  .custom-variant-dropdown:focus-within .glass-dropdown-toggle { 
+    background: rgba(15, 15, 15, 0.9) !important; 
+    border-color: rgba(255, 255, 255, 0.3) !important; 
+  }
+  
+  .glass-dropdown-menu { 
+    position: absolute; 
+    top: calc(100% + 8px); 
+    left: 0; 
+    width: 100%;
+    min-width: 100%;
+    background: rgba(15, 15, 15, 0.85) !important; /* Tiroir fumé uniforme */
+    backdrop-filter: blur(25px) !important; -webkit-backdrop-filter: blur(25px) !important; 
+    border: 1px solid rgba(255, 255, 255, 0.15) !important; 
+    border-radius: 16px !important; 
+    padding: 8px !important; 
+    box-shadow: 0 15px 40px rgba(0,0,0,0.5) !important; 
+    box-sizing: border-box !important;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+  }
+  
+  .custom-variant-dropdown:hover .glass-dropdown-menu, 
+  .custom-variant-dropdown:focus-within .glass-dropdown-menu { 
+    opacity: 1; 
+    visibility: visible; 
+    pointer-events: auto; 
+    transform: translateY(0); 
+  }
+
+  /* --- BARRE DE DÉFILEMENT --- */
+  .glass-dropdown-list { 
+    margin: 0 !important; 
+    padding: 0 !important; 
+    list-style: none !important; 
+    max-height: 160px !important; /* Forcera la barre dès 4 options */
+    overflow-y: auto !important; 
+    overflow-x: hidden !important;
+    display: block !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+  }
+  
+  .glass-dropdown-list::-webkit-scrollbar { width: 4px !important; display: block !important; }
+  .glass-dropdown-list::-webkit-scrollbar-track { background: transparent !important; margin: 4px 0 !important; }
+  .glass-dropdown-list::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.3) !important; border-radius: 10px !important; }
+  .glass-dropdown-list::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.6) !important; }
+
+  /* --- DESIGN INTÉRIEUR (DIV au lieu de BUTTON pour bloquer le thème) --- */
+  .glass-dropdown-list li {
+    margin: 0 !important;
+    padding: 0 !important;
+    list-style: none !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  .custom-variant-option { 
+    display: block !important; 
+    width: 100% !important;
+    text-align: left !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 8px !important; 
+    padding: 10px 16px !important; 
+    color: rgba(255, 255, 255, 0.9) !important; 
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important; 
+    box-sizing: border-box !important;
+    margin-bottom: 2px !important;
+    line-height: 1.5 !important;
+  }
+  
+  .custom-variant-option:last-child { margin-bottom: 0 !important; }
+
+  .custom-variant-option:hover, .custom-variant-option.active { 
+    background: rgba(255, 255, 255, 0.15) !important; 
+    color: #fff !important; 
+  }
+  
+  .hidden-real-select { display: none !important; }
+
+  /* --- RESTE DU CODE --- */
+  .color-selector { display: flex; gap: 12px; flex-wrap: wrap; }
+  .hidden { display: none; }
+  .color-circle { display: inline-block !important; width: 40px; height: 40px; min-width: 40px; min-height: 40px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; transition: all 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.1); background-color: #ccc; }
+  .color-input:checked + .color-circle { border-color: #000; transform: scale(1.1); box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+  
+  .quantity-wrapper { margin-bottom: 25px; position: relative; z-index: 10; }
+  .quantity-selector { display: flex !important; align-items: center !important; justify-content: space-between !important; background: rgba(255, 255, 255, 0.3) !important; border: 1px solid rgba(0, 0, 0, 0.2) !important; border-radius: 50px !important; width: 130px !important; height: 46px !important; padding: 3px !important; box-shadow: none !important; backdrop-filter: none !important; }
+  .qty-btn { appearance: none !important; background: transparent !important; border: none !important; color: #111 !important; font-size: 1.4rem !important; width: 40px !important; height: 40px !important; display: flex !important; justify-content: center !important; align-items: center !important; cursor: pointer !important; }
+  .qty-input { appearance: textfield !important; background: transparent !important; border: none !important; color: #111 !important; font-size: 1.2rem !important; font-weight: 700 !important; flex-grow: 1 !important; text-align: center !important; outline: none !important; width: 50px !important;}
+  .qty-input::-webkit-outer-spin-button, .qty-input::-webkit-inner-spin-button { appearance: none !important; margin: 0 !important; }
+  
+  .action-buttons { margin-top: 20px; display: flex; flex-direction: column; gap: 15px; position: relative; z-index: 10; }
+  .btn-primary { width: 100%; padding: 16px; background-color: #111; color: #fff; border: none; border-radius: 50px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: all 0.3s ease; letter-spacing: 0.5px; }
+  .btn-primary:hover { background-color: #333; transform: translateY(-2px); box-shadow: 0 8px 15px rgba(0,0,0,0.1); }
+  .btn-primary:disabled { background-color: #aaa; cursor: not-allowed; transform: none; box-shadow: none; }
+  .shopify-payment-wrapper { margin-top: 5px; }
+  .shopify-payment-button__button--unbranded { background-color: #111 !important; border-radius: 50px !important; }
+  
+  .pickup-availability { margin-top: 15px; font-size: 0.9rem; font-weight: 600; color: #27ae60; }
+
+  @media (max-width: 768px) {
+    .glass-box { padding: 15px !important; }
+    .snowpeak-product-page { padding: 60px 0 20px 0 !important; }
+    .product-grid { grid-template-columns: 1fr; gap: 15px; }
+    .product-title { font-size: 1.8rem !important; }
+    .glass-dropdown-toggle { padding: 10px 15px !important; font-size: 0.95rem !important; }
+    .main-image-container { aspect-ratio: auto !important; height: 280px !important; }
+    .thumbnails-container { gap: 10px; margin-top: 10px; }
+    .thumbnail { width: calc((100% - 30px) / 4) !important; height: auto !important; }
+  }
+</style>
+
 <div class="snowpeak-product-page">
   <div class="page-width product-grid">
     <div class="product-media-gallery">
@@ -52,7 +240,6 @@
               <div class="unit-price" id="UnitPrice" {% unless current_variant.unit_price_measurement %}style="display:none;"{% endunless %}>
                 {{ current_variant.unit_price | money }} / {% if current_variant.unit_price_measurement.reference_value != 1 %}{{ current_variant.unit_price_measurement.reference_value }}{% endif %}{{ current_variant.unit_price_measurement.reference_unit }}
               </div>
-              {%- if cart.taxes_included -%}<div class="tax-note">{{ 'products.product.taxes_included' | t }}</div>{%- endif -%}
             </div>
           {%- when 'description' -%}
             <div class="product-description rte" {{ block.shopify_attributes }}>{{ product.description }}</div>
@@ -86,65 +273,44 @@
                         </div>
                       {% else %}
                         <div class="selector-wrapper">
-                          <label for="Option{{ option.position }}">{{ option.name }}</label>
-                          <select id="Option{{ option.position }}" name="options[{{ option.name | escape }}]" class="single-option-selector glass-select" data-index="option{{ option.position }}">
-                            {% for value in option.values %}
-                              <option value="{{ value | escape }}" {% if option.selected_value == value %}selected="selected"{% endif %}>{{ value }}</option>
-                            {% endfor %}
-                          </select>
+                          <label>{{ option.name }}</label>
+                          <div class="custom-variant-dropdown" tabindex="0">
+                            <select id="Option{{ option.position }}" name="options[{{ option.name | escape }}]" class="single-option-selector hidden-real-select" data-index="option{{ option.position }}">
+                              {% for value in option.values %}
+                                <option value="{{ value | escape }}" {% if option.selected_value == value %}selected="selected"{% endif %}>{{ value }}</option>
+                              {% endfor %}
+                            </select>
+
+                            <div class="glass-dropdown-toggle">
+                              <span class="selected-text">{{ option.selected_value }}</span>
+                              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+                            </div>
+                            
+                            <div class="glass-dropdown-menu">
+                              <ul class="glass-dropdown-list custom-scrollbar">
+                                {% for value in option.values %}
+                                  <li>
+                                    <div class="custom-variant-option {% if option.selected_value == value %}active{% endif %}" data-value="{{ value | escape }}">
+                                      {{ value }}
+                                    </div>
+                                  </li>
+                                {% endfor %}
+                              </ul>
+                            </div>
+                          </div>
                         </div>
                       {% endif %}
                     {% endfor %}
                   </div>
                 {% endunless %}
 
-                {%- if product.gift_card? -%}
-                  <div class="recipient-form" style="margin-bottom: 20px;">
-                    <label for="Recipient-checkbox" style="display:flex; align-items:center; gap:8px; font-weight:600; cursor:pointer;">
-                      <input type="checkbox" name="properties[__shopify_send_gift_card_to_recipient]" id="Recipient-checkbox">
-                      {{ 'products.product.gift_card.send_as_gift' | t }}
-                    </label>
-                    <div class="recipient-fields" style="display: none; margin-top: 15px; flex-direction:column; gap:10px;">
-                      <div class="recipient-field">
-                        <label for="Recipient-email">{{ 'products.product.gift_card.recipient_email' | t }}</label>
-                        <input type="email" class="glass-select" name="properties[Recipient email]" placeholder="{{ 'products.product.gift_card.recipient_email' | t }}" id="Recipient-email">
-                      </div>
-                      <div class="recipient-field">
-                        <label for="Recipient-name">{{ 'products.product.gift_card.recipient_name' | t }}</label>
-                        <input type="text" class="glass-select" name="properties[Recipient name]" placeholder="{{ 'products.product.gift_card.recipient_name' | t }}" id="Recipient-name">
-                      </div>
-                      <div class="recipient-field">
-                        <label for="Recipient-message">{{ 'products.product.gift_card.message' | t }}</label>
-                        <textarea class="glass-select" name="properties[Message]" placeholder="{{ 'products.product.gift_card.message' | t }}" id="Recipient-message"></textarea>
-                      </div>
-                      <div class="recipient-field">
-                        <label for="Recipient-date">{{ 'products.product.gift_card.send_on_date' | t }}</label>
-                        <input type="date" class="glass-select" name="properties[Send on]" placeholder="{{ 'products.product.gift_card.send_on_date' | t }}" id="Recipient-date">
-                      </div>
-                    </div>
-                  </div>
-                  <script>
-                    document.getElementById('Recipient-checkbox').addEventListener('change', function() {
-                      const fields = document.querySelector('.recipient-fields');
-                      const email = document.getElementById('Recipient-email');
-                      if(this.checked) { 
-                        fields.style.display = 'flex'; 
-                        email.setAttribute('required', 'required'); 
-                      } else { 
-                        fields.style.display = 'none'; 
-                        email.removeAttribute('required'); 
-                      }
-                    });
-                  </script>
-                {%- endif -%}
-
                 {% if block.settings.show_quantity_selector %}
                   <div class="quantity-wrapper">
                     <label for="Quantity">{{ 'products.product.quantity' | t }}</label>
                     <div class="quantity-selector">
-                      <button type="button" class="qty-btn qty-minus" aria-label="{{ 'accessibility.decrease_quantity' | t }}">−</button>
-                      <input type="number" id="Quantity" name="quantity" value="1" min="1" class="qty-input" aria-label="{{ 'accessibility.product_quantity' | t }}">
-                      <button type="button" class="qty-btn qty-plus" aria-label="{{ 'accessibility.increase_quantity' | t }}">+</button>
+                      <button type="button" class="qty-btn qty-minus">−</button>
+                      <input type="number" id="Quantity" name="quantity" value="1" min="1" class="qty-input">
+                      <button type="button" class="qty-btn qty-plus">+</button>
                     </div>
                   </div>
                 {% endif %}
@@ -152,7 +318,7 @@
                 <div class="installments-box">{{ form | payment_terms }}</div>
 
                 <div class="action-buttons">
-                  <button type="submit" name="add" id="AddToCart" class="btn-primary" {% unless current_variant.available %}disabled="disabled"{% endunless %} data-add-to-cart-text="{{ 'products.product.add_to_cart' | t }}" data-out-of-stock-text="{{ 'products.product.sold_out' | t }}" data-unavailable-text="{{ 'products.product.unavailable' | t }}">
+                  <button type="submit" name="add" id="AddToCart" class="btn-primary" {% unless current_variant.available %}disabled="disabled"{% endunless %} data-add-to-cart-text="{{ 'products.product.add_to_cart' | t }}" data-out-of-stock-text="{{ 'products.product.sold_out' | t }}">
                     <span id="AddToCartText">{% if current_variant.available %}{{ 'products.product.add_to_cart' | t }}{% else %}{{ 'products.product.sold_out' | t }}{% endif %}</span>
                   </button>
                   {% if block.settings.show_dynamic_checkout %}
@@ -162,13 +328,6 @@
                   {% endif %}
                 </div>
               {% endform %}
-            </div>
-          {%- when 'pickup_availability' -%}
-            <div id="StoreAvailability" class="pickup-availability" {{ block.shopify_attributes }}>
-              {% if current_variant.store_availabilities.size > 0 %}
-                {% assign availability = current_variant.store_availabilities | first %}
-                {% if availability.available %}✓ {{ 'products.product.pickup_available' | t }} {{ availability.location.name }}{% else %}✕ {{ 'products.product.pickup_unavailable' | t }}{% endif %}
-              {% endif %}
             </div>
         {%- endcase -%}
       {%- endfor -%}
@@ -185,41 +344,99 @@ document.addEventListener('DOMContentLoaded', function() {
     const plusBtn = selector.querySelector('.qty-plus');
     const qtyInput = selector.querySelector('.qty-input');
     if (minusBtn && plusBtn && qtyInput) {
-      minusBtn.addEventListener('click', function(e) { e.preventDefault(); let currentValue = parseInt(qtyInput.value) || 1; if (currentValue > 1) { qtyInput.value = currentValue - 1; } });
-      plusBtn.addEventListener('click', function(e) { e.preventDefault(); let currentValue = parseInt(qtyInput.value) || 1; qtyInput.value = currentValue + 1; });
+      minusBtn.addEventListener('click', (e) => { e.preventDefault(); let val = parseInt(qtyInput.value) || 1; if(val > 1) qtyInput.value = val - 1; });
+      plusBtn.addEventListener('click', (e) => { e.preventDefault(); let val = parseInt(qtyInput.value) || 1; qtyInput.value = val + 1; });
     }
   });
 
+  const variants = JSON.parse(document.getElementById('ProductJson-{{ product.id }}').innerHTML || '[]');
   const thumbnails = document.querySelectorAll('.thumbnail');
   const mainImage = document.querySelector('#MainMedia');
+  
   thumbnails.forEach(thumb => {
     thumb.addEventListener('click', function() {
       thumbnails.forEach(t => t.classList.remove('active-thumb'));
       this.classList.add('active-thumb');
       const newSrc = this.getAttribute('data-image-src');
-      if (newSrc && mainImage.tagName === 'IMG') { mainImage.src = newSrc; }
+      if (newSrc && mainImage.tagName === 'IMG') mainImage.src = newSrc;
+
+      const mediaId = parseInt(this.getAttribute('data-media-id'));
+      if (!mediaId || variants.length === 0) return;
+
+      const matchedVariant = variants.find(v => v.featured_media && v.featured_media.id === mediaId);
+
+      if (matchedVariant) {
+        matchedVariant.options.forEach((optionValue, index) => {
+          const position = index + 1;
+          const radio = document.querySelector(`.single-option-selector.color-input[data-index="option${position}"][value="${optionValue.replace(/"/g, '\\"')}"]`);
+          if (radio) radio.checked = true;
+
+          const select = document.querySelector(`select.single-option-selector[data-index="option${position}"]`);
+          if (select) {
+            select.value = optionValue;
+            const dropdownBlock = select.closest('.custom-variant-dropdown');
+            if (dropdownBlock) {
+              const textSpan = dropdownBlock.querySelector('.selected-text');
+              if (textSpan) textSpan.textContent = optionValue;
+              
+              const customOptions = dropdownBlock.querySelectorAll('.custom-variant-option');
+              customOptions.forEach(opt => {
+                if (opt.getAttribute('data-value') === optionValue) {
+                  opt.classList.add('active');
+                } else {
+                  opt.classList.remove('active');
+                }
+              });
+            }
+          }
+        });
+        const firstSelect = document.querySelector('.single-option-selector');
+        if (firstSelect) firstSelect.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+    });
+  });
+
+  document.querySelectorAll('.custom-variant-option').forEach(option => {
+    option.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      
+      const container = this.closest('.custom-variant-dropdown');
+      const realSelect = container.querySelector('.hidden-real-select');
+      const textSpan = container.querySelector('.selected-text');
+      const value = this.getAttribute('data-value');
+      
+      textSpan.textContent = this.textContent.trim();
+      
+      container.querySelectorAll('.custom-variant-option').forEach(opt => opt.classList.remove('active'));
+      this.classList.add('active');
+      
+      if (document.activeElement) {
+        document.activeElement.blur();
+      }
+      
+      const menuBox = container.querySelector('.glass-dropdown-menu');
+      menuBox.style.display = 'none';
+      setTimeout(() => { menuBox.style.display = ''; }, 50);
+
+      realSelect.value = value;
+      realSelect.dispatchEvent(new Event('change', { bubbles: true }));
     });
   });
 
   const selectors = document.querySelectorAll('.single-option-selector');
-  let variants = [];
-  const jsonScript = document.querySelector('script[type="application/json"][id^="ProductJson"]');
-  if(jsonScript) { variants = JSON.parse(jsonScript.innerHTML); }
-
   selectors.forEach(selector => {
     selector.addEventListener('change', function() {
-      const formatMoney = (cents) => {
-        return new Intl.NumberFormat('{{ request.locale.iso_code }}', {
-          style: 'currency',
-          currency: '{{ cart.currency.iso_code }}'
-        }).format(cents / 100);
-      };
+      const formatMoney = (cents) => new Intl.NumberFormat('{{ request.locale.iso_code }}', { style: 'currency', currency: '{{ cart.currency.iso_code }}' }).format(cents / 100);
 
       let currentOptions = [];
       document.querySelectorAll('.single-option-selector').forEach(sel => {
-        if(sel.type === 'radio') { if(sel.checked) currentOptions.push(sel.value); } else { currentOptions.push(sel.value); }
+        if(sel.type === 'radio') { if(sel.checked) currentOptions.push(sel.value); } 
+        else { currentOptions.push(sel.value); }
       });
-      let matchedVariant = variants.find(variant => { return variant.options.every((val, index) => val === currentOptions[index]); });
+      
+      let matchedVariant = variants.find(v => v.options.every((val, index) => val === currentOptions[index]));
+      
       if (matchedVariant) {
         document.getElementById('VariantIdHidden').value = matchedVariant.id;
         window.history.replaceState(null, null, '?variant=' + matchedVariant.id);
@@ -227,17 +444,13 @@ document.addEventListener('DOMContentLoaded', function() {
         const btn = document.getElementById('AddToCart');
         const btnText = document.getElementById('AddToCartText');
         if (matchedVariant.available) { 
-          btn.disabled = false; 
-          btnText.textContent = btn.dataset.addToCartText || '{{ "products.product.add_to_cart" | t }}'; 
+          btn.disabled = false; btnText.textContent = btn.dataset.addToCartText; 
         } else { 
-          btn.disabled = true; 
-          btnText.textContent = btn.dataset.outOfStockText || '{{ "products.product.sold_out" | t }}'; 
+          btn.disabled = true; btnText.textContent = btn.dataset.outOfStockText; 
         }
         
         const priceElement = document.getElementById('ProductPrice');
-        if (priceElement) {
-          priceElement.innerHTML = formatMoney(matchedVariant.price);
-        }
+        if (priceElement) priceElement.innerHTML = formatMoney(matchedVariant.price);
         
         const compareElement = document.getElementById('ComparePrice');
         if (compareElement) {
@@ -250,67 +463,11 @@ document.addEventListener('DOMContentLoaded', function() {
           const matchingThumb = document.querySelector(`.thumbnail[data-media-id="${matchedVariant.featured_media.id}"]`);
           if (matchingThumb) matchingThumb.click();
         }
-      } else {
-        const btn = document.getElementById('AddToCart');
-        btn.disabled = true;
-        document.getElementById('AddToCartText').textContent = btn.dataset.unavailableText || '{{ "products.product.unavailable" | t }}';
       }
     });
   });
 });
 </script>
-
-{% stylesheet %}
-  .snowpeak-product-page { width: 100vw; padding: 120px 0 20px 0; background-attachment: fixed; background-repeat: no-repeat; background-size: cover; position: relative; left: 50%; right: 50%; margin-left: -50vw; margin-right: -50vw; }
-  .page-width { width: 100%; margin: 0 auto; padding: 0 20px; max-width: 1200px; }
-  .product-grid { width: 100%; display: grid; grid-template-columns: 1.2fr 1fr; gap: 40px; align-items: start; margin-bottom: 0px; }
-  .glass-box { background: rgba(255, 255, 255, 0.45); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.6); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); border-radius: 1.5rem; padding: 30px; }
-  .main-image-container { width: 100%; aspect-ratio: 4/3; display: flex; justify-content: center; align-items: center; margin-bottom: 20px; border-radius: 12px; overflow: hidden; }
-  .main-product-media { width: 100%; height: 100%; object-fit: cover; }
-  .thumbnails-container { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 10px; }
-  .thumbnail { width: 90px; height: 90px; flex-shrink: 0; border-radius: 12px; cursor: pointer; position: relative; padding: 8px; transition: all 0.3s ease; background: rgba(255, 255, 255, 0.45); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.6); box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08); }
-  .thumbnail.active-thumb { border-color: #000; transform: translateY(-4px); box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15); }
-  .thumbnail img { width: 100%; height: 100%; object-fit: cover; border-radius: 6px; }
-  .media-icon { position: absolute; top: -5px; right: -5px; background: #000; color: white; font-size: 11px; padding: 4px 6px; border-radius: 6px; box-shadow: 0 2px 5px rgba(0,0,0,0.3); }
-  .vendor { font-size: 0.85rem; color: #555; text-transform: uppercase; margin-bottom: 5px; }
-  .product-title { font-size: 2.5rem; font-weight: 800; margin: 0 0 20px 0; line-height: 1.1; color: #111; }
-  .price-block { margin-bottom: 25px; }
-  .current-price { font-size: 1.8rem; font-weight: 700; color: #111; }
-  .compare-price { font-size: 1.1rem; color: #777; margin-left: 10px; }
-  .tax-note, .unit-price { font-size: 0.85rem; color: #555; margin-top: 5px; }
-  .product-description { line-height: 1.6; margin-bottom: 30px; color: #333; max-height: 220px; overflow-y: auto; padding-right: 15px; }
-  .product-description::-webkit-scrollbar { width: 6px; }
-  .product-description::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.2); border-radius: 8px; }
-  .product-description::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.3); border-radius: 8px; }
-  .product-description::-webkit-scrollbar-thumb:hover { background: rgba(0, 0, 0, 0.5); }
-  
-  .selector-wrapper, .color-selector-wrapper { margin-bottom: 20px; }
-  .selector-wrapper label, .color-selector-wrapper > label, .quantity-wrapper label, .recipient-field label { display: block; font-weight: 600; margin-bottom: 8px; font-size: 0.9rem; text-transform: uppercase; }
-  .recipient-field { width: 100%; }
-  
-  .glass-select { width: 100%; padding: 12px; background: rgba(255,255,255,0.6); border: 1px solid rgba(0,0,0,0.1); border-radius: 8px; font-size: 1rem; outline: none; }
-  .color-selector { display: flex; gap: 12px; flex-wrap: wrap; }
-  .hidden { display: none; }
-  .color-circle { display: inline-block !important; width: 40px; height: 40px; min-width: 40px; min-height: 40px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; transition: all 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.1); background-color: #ccc; }
-  .color-input:checked + .color-circle { border-color: #000; transform: scale(1.1); box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
-  .quantity-wrapper { margin-bottom: 25px; }
-  .quantity-selector { display: flex !important; align-items: center !important; justify-content: space-between !important; background: rgba(255, 255, 255, 0.3) !important; border: 1px solid rgba(0, 0, 0, 0.2) !important; border-radius: 50px !important; width: 130px !important; height: 46px !important; padding: 3px !important; box-shadow: none !important; backdrop-filter: none !important; }
-  .qty-btn { appearance: none !important; -webkit-appearance: none !important; background: transparent !important; border: none !important; outline: none !important; color: #111 !important; font-size: 1.4rem !important; width: 40px !important; height: 40px !important; display: flex !important; justify-content: center !important; align-items: center !important; cursor: pointer !important; border-radius: 40px !important; transition: all 0.2s ease !important; padding: 0 !important; margin: 0 !important; box-shadow: none !important; flex-shrink: 0 !important; }
-  .qty-input { appearance: textfield !important; -moz-appearance: textfield !important; background: transparent !important; border: none !important; color: #111 !important; font-size: 1.2rem !important; font-weight: 700 !important; flex-grow: 1 !important; height: 100% !important; text-align: center !important; outline: none !important; padding: 0 !important; margin: 0 !important; box-shadow: none !important; min-width: 0 !important; }
-  .qty-input::-webkit-outer-spin-button, .qty-input::-webkit-inner-spin-button { appearance: none !important; -webkit-appearance: none !important; margin: 0 !important; }
-  .action-buttons { margin-top: 20px; display: flex; flex-direction: column; gap: 15px; }
-  .btn-primary { width: 100%; padding: 16px; background-color: #111; color: #fff; border: none; border-radius: 50px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: all 0.3s ease; letter-spacing: 0.5px; }
-  .btn-primary:hover { background-color: #333; transform: translateY(-2px); box-shadow: 0 8px 15px rgba(0,0,0,0.1); }
-  .btn-primary:disabled { background-color: #aaa; cursor: not-allowed; transform: none; box-shadow: none; }
-  .shopify-payment-wrapper { margin-top: 5px; }
-  .shopify-payment-button__button--unbranded { background-color: #111 !important; border-radius: 50px !important; }
-  .shopify-payment-button__button--unbranded:hover { background-color: #333 !important; }
-  
-  .pickup-availability { margin-top: 15px; font-size: 0.9rem; font-weight: 600; color: #27ae60; }
-  .product-block-app { margin-bottom: 20px; }
-  .product-block-custom-liquid { margin-bottom: 20px; }
-  @media (max-width: 768px) { .product-grid { grid-template-columns: 1fr; } }
-{% endstylesheet %}
 
 {% schema %}
 {

@@ -67,6 +67,14 @@
 
     {% render 'meta-tags' %}
     {{ content_for_header }}
+
+    <script>
+      window.themeStrings = {
+        adding: {{ 'cart.general.adding' | t | json }},
+        addedToCart: {{ 'cart.general.added_to_cart' | t | json }},
+        errorAdding: {{ 'cart.general.error_adding' | t | json }}
+      };
+    </script>
   </head>
 
   {%- capture body_styles -%}

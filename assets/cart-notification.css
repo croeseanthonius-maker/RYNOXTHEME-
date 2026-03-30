@@ -20,12 +20,23 @@
   transition: top 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   visibility: hidden;
 }
+
 .cart-notification.show {
-  top: 20px;
+  top: 75px; /* Modifié pour apparaître élégamment juste en dessous de votre Header (56px) */
   visibility: visible;
 }
-.notification-content { display: flex; align-items: center; gap: 10px; font-weight: 600; color: #111; }
-.notification-content p { margin: 0; }
+
+.notification-content { 
+  display: flex; 
+  align-items: center; 
+  gap: 10px; 
+  font-weight: 600; 
+  color: #111; 
+}
+
+.notification-content p { 
+  margin: 0; 
+}
 
 .success-icon {
   background: #27ae60;
@@ -37,7 +48,9 @@
   align-items: center;
   justify-content: center;
   font-size: 14px;
+  flex-shrink: 0; /* Empêche l'icône de s'écraser sur petit écran */
 }
+
 .btn-view-cart {
   background: #000;
   color: #fff;
@@ -47,6 +60,52 @@
   font-size: 0.9rem;
   font-weight: 600;
   transition: background 0.3s;
+  white-space: nowrap; /* Empêche le texte du bouton de passer sur 2 lignes */
 }
-.btn-view-cart:hover { background: #333; color: #fff; text-decoration: none; }
-.close-btn { background: transparent; border: none; font-size: 1.2rem; cursor: pointer; color: #555; padding: 0; outline: none; }
+
+.btn-view-cart:hover { 
+  background: #333; 
+  color: #fff; 
+  text-decoration: none; 
+}
+
+.close-btn { 
+  background: transparent; 
+  border: none; 
+  font-size: 1.2rem; 
+  cursor: pointer; 
+  color: #555; 
+  padding: 0; 
+  outline: none; 
+  flex-shrink: 0; 
+}
+
+/* --- OPTIMISATION SPÉCIFIQUE POUR MOBILE --- */
+@media screen and (max-width: 799px) {
+  .cart-notification {
+    width: 95%; /* Prend un peu plus de place sur les côtés */
+    padding: 12px 15px; /* On réduit le padding interne */
+    gap: 10px; /* On réduit l'espace entre les éléments */
+    border-radius: 1rem; /* Un peu moins arrondi pour gagner de l'espace */
+  }
+  
+  .cart-notification.show {
+    top: 70px; /* S'ajuste parfaitement sous le header mobile */
+  }
+
+  .notification-content {
+    gap: 8px;
+    font-size: 0.85rem; /* On diminue très légèrement la taille du texte */
+  }
+
+  .success-icon {
+    width: 20px;
+    height: 20px;
+    font-size: 12px;
+  }
+
+  .btn-view-cart {
+    padding: 6px 12px;
+    font-size: 0.8rem;
+  }
+}
