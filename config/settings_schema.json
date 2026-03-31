@@ -4,8 +4,8 @@
     "theme_name": "Rynox",
     "theme_version": "1.0.0",
     "theme_author": "Adele Anne Claudy Zoaeter",
-    "theme_documentation_url": "https://onedrive.live.com/:w:/g/personal/7DFB28B94B9EB606/IQCGNwzOgSkWRK9MjuH3JZZjARuAkdIWSvx9B0-MPO3TDB0?rtime=Zfqu0BmM3kg&redeem=aHR0cHM6Ly8xZHJ2Lm1zL3cvYy83REZCMjhCOTRCOUVCNjA2L0lRQ0dOd3pPZ1NrV1JLOU1qdUgzSlpaakFSdUFrZElXU3Z4OUIwLU1QTzNUREIwP2U9VkpiR2Rp",
-    "theme_support_url": "https://onedrive.live.com/:w:/g/personal/7DFB28B94B9EB606/IQCGNwzOgSkWRK9MjuH3JZZjARuAkdIWSvx9B0-MPO3TDB0?rtime=Zfqu0BmM3kg&redeem=aHR0cHM6Ly8xZHJ2Lm1zL3cvYy83REZCMjhCOTRCOUVCNjA2L0lRQ0dOd3pPZ1NrV1JLOU1qdUgzSlpaakFSdUFrZElXU3Z4OUIwLU1QTzNUREIwP2U9VkpiR2Rp"
+    "theme_documentation_url": "https://tally.so/r/A7Dzz0",
+    "theme_support_url": "https://tally.so/r/dWjbOr"
   },
   {
     "name": "t:labels.brand",
@@ -81,7 +81,7 @@
     ]
   },
   {
-    "name": "Layout",
+    "name": "t:general.layout",
     "settings": [
       {
         "type": "select",

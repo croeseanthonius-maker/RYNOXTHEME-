@@ -411,13 +411,13 @@ document.addEventListener('DOMContentLoaded', function() {
       container.querySelectorAll('.custom-variant-option').forEach(opt => opt.classList.remove('active'));
       this.classList.add('active');
       
+      // Blur the container to close the menu
+      container.blur();
+      
+      // Remove focus from the document to ensure menu stays closed
       if (document.activeElement) {
         document.activeElement.blur();
       }
-      
-      const menuBox = container.querySelector('.glass-dropdown-menu');
-      menuBox.style.display = 'none';
-      setTimeout(() => { menuBox.style.display = ''; }, 50);
 
       realSelect.value = value;
       realSelect.dispatchEvent(new Event('change', { bubbles: true }));
