@@ -174,15 +174,105 @@
   
   .pickup-availability { margin-top: 15px; font-size: 0.9rem; font-weight: 600; color: #27ae60; }
 
-  @media (max-width: 768px) {
+  /* Fix pour les produits avec nombreuses variantes - Desktop et Mobile */
+  .product-form__input {
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+  
+  .product-form__input select,
+  .single-option-selector {
+    width: 100% !important;
+    max-width: 100% !important;
+    font-size: 14px;
+    padding: 10px;
+    margin-bottom: 0.5rem;
+  }
+  
+  .variant-selectors,
+  .product-form__input--swatch,
+  .variant-input-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    max-height: 300px;
+    overflow-y: auto;
+  }
+  
+  .product-form__input input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+  }
+  
+  .product-form__input input[type="radio"] + label {
+    padding: 8px 12px;
+    font-size: 13px;
+    margin: 4px;
+    min-width: auto;
+    display: inline-block;
+  }
+  
+  .color-swatch,
+  .variant-input {
+    width: 40px !important;
+    height: 40px !important;
+    min-width: 40px;
+  }
+  
+  .product-form,
+  .product__info-wrapper {
+    overflow-x: hidden !important;
+    width: 100%;
+  }
+  
+  .product-form__controls-group {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .product-form__submit,
+  .action-buttons {
+    width: 100%;
+    margin-top: 1rem;
+  }
+
+  /* Fix pour les produits avec nombreuses variantes sur mobile */
+  @media screen and (max-width: 749px) {
+    /* Règles existantes */
     .glass-box { padding: 15px !important; }
     .snowpeak-product-page { padding: 60px 0 20px 0 !important; }
     .product-grid { grid-template-columns: 1fr; gap: 15px; }
+    .product-info-panel { margin-top: 20px !important; }
     .product-title { font-size: 1.8rem !important; }
     .glass-dropdown-toggle { padding: 10px 15px !important; font-size: 0.95rem !important; }
-    .main-image-container { aspect-ratio: auto !important; height: 280px !important; }
-    .thumbnails-container { gap: 10px; margin-top: 10px; }
-    .thumbnail { width: calc((100% - 30px) / 4) !important; height: auto !important; }
+    .product-media-gallery { height: 480px !important; overflow: hidden !important; position: relative !important; }
+    .main-image-container { height: 350px !important; }
+    .main-product-media { max-height: 100%; }
+    .thumbnails-container { gap: 10px; margin-top: 10px; height: 120px !important; overflow-x: auto !important; }
+    .thumbnail { width: calc((100% - 30px) / 4) !important; height: 100px !important; flex-shrink: 0 !important; }
+    
+    /* Adaptations mobiles pour les variantes */
+    .variant-selectors,
+    .product-form__input--swatch,
+    .variant-input-wrap {
+      gap: 8px;
+      max-height: 200px;
+    }
+    
+    .product-form__input input[type="radio"] + label {
+      padding: 8px 12px;
+      font-size: 13px;
+      margin: 4px;
+    }
+    
+    .color-swatch,
+    .variant-input,
+    .color-circle {
+      width: 40px !important;
+      height: 40px !important;
+      min-width: 40px;
+    }
+    
   }
 </style>
 
