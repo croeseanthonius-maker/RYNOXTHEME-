@@ -1,13 +1,13 @@
 <style>
-  .snowpeak-product-page { width: 100vw; padding: 120px 0 20px 0; background-attachment: fixed; background-repeat: no-repeat; background-size: cover; position: relative; left: 50%; right: 50%; margin-left: -50vw; margin-right: -50vw; }
-  .page-width { width: 100%; margin: 0 auto; padding: 0 20px; max-width: 1200px; }
-  .product-grid { width: 100%; display: grid; grid-template-columns: 1.2fr 1fr; gap: 40px; align-items: start; margin-bottom: 0px; }
+  .snowpeak-product-page { width: 100%; max-width: 100%; padding: 120px 20px 20px 20px; background-attachment: fixed; background-repeat: no-repeat; background-size: cover; position: relative; margin: 0; box-sizing: border-box; }
+  .page-width { width: 100%; margin: 0 auto; padding: 0; max-width: 1200px; box-sizing: border-box; }
+  .product-grid { width: 100%; display: grid; grid-template-columns: 1.2fr 1fr; gap: 40px; align-items: start; margin-bottom: 0px; box-sizing: border-box; }
   
-  .product-media-gallery { position: relative; z-index: 10; }
-  .product-info-panel { position: relative; z-index: 20; overflow: visible !important; }
+  .product-media-gallery { position: relative; z-index: 10; width: 100%; min-width: 0; }
+  .product-info-panel { position: relative; z-index: 20; overflow: visible !important; width: 100%; min-width: 0; }
   
-  .glass-box { background: rgba(255, 255, 255, 0.25); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.6); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); border-radius: 1.5rem; padding: 30px; }
-  .main-image-container { width: 100%; aspect-ratio: 4/3; display: flex; justify-content: center; align-items: center; margin-bottom: 20px; border-radius: 12px; overflow: hidden; padding: 15px; }
+  .glass-box { background: rgba(255, 255, 255, 0.25); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.6); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); border-radius: 1.5rem; padding: 30px; width: 100%; box-sizing: border-box; }
+  .main-image-container { width: 100%; aspect-ratio: 4/3; max-height: 600px; display: flex; justify-content: center; align-items: center; margin-bottom: 20px; border-radius: 12px; overflow: hidden; padding: 15px; box-sizing: border-box; }
   .main-product-media { width: 100%; height: 100%; object-fit: contain; object-position: center; display: block; }
   
   .thumbnails-container { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 10px; flex-wrap: nowrap; scroll-behavior: smooth; scroll-snap-type: x mandatory; scrollbar-width: none; -ms-overflow-style: none; }
@@ -199,6 +199,7 @@
     overflow-y: auto;
   }
   
+  
   .product-form__input input[type="radio"] {
     position: absolute;
     opacity: 0;
@@ -223,6 +224,7 @@
   .product__info-wrapper {
     overflow-x: hidden !important;
     width: 100%;
+    box-sizing: border-box;
   }
   
   .product-form__controls-group {
@@ -236,22 +238,31 @@
     margin-top: 1rem;
   }
 
-  /* Fix pour les produits avec nombreuses variantes sur mobile */
-  @media screen and (max-width: 749px) {
-    /* Règles existantes */
+  /* MOBILE - Petits écrans (jusqu'à 480px) */
+  @media screen and (max-width: 480px) {
+    .snowpeak-product-page { padding: 60px 16px 20px 16px !important; }
+    .page-width { padding: 0 !important; }
+    .product-grid { grid-template-columns: 1fr; gap: 20px !important; }
+    .glass-box { padding: 12px !important; border-radius: 12px !important; }
+    .main-image-container { aspect-ratio: 1 / 1; max-height: 100%; padding: 10px; margin-bottom: 15px; }
+    .thumbnails-container { gap: 8px; margin-top: 10px; }
+    .thumbnail { width: calc((100% - 24px) / 4) !important; aspect-ratio: 1 / 1; flex-shrink: 0 !important; }
+    .product-title { font-size: 1.5rem !important; }
+    .current-price { font-size: 1.5rem !important; }
+  }
+
+  /* TABLET - Écrans moyens (481px à 768px) */
+  @media screen and (max-width: 768px) {
+    .snowpeak-product-page { padding: 60px 20px 20px 20px !important; }
+    .product-grid { grid-template-columns: 1fr; gap: 25px !important; }
     .glass-box { padding: 15px !important; }
-    .snowpeak-product-page { padding: 60px 0 20px 0 !important; }
-    .product-grid { grid-template-columns: 1fr; gap: 15px; }
     .product-info-panel { margin-top: 20px !important; }
     .product-title { font-size: 1.8rem !important; }
+    .main-image-container { aspect-ratio: 4/3; max-height: 500px; padding: 12px; }
+    .thumbnails-container { gap: 10px; margin-top: 10px; }
+    .thumbnail { width: calc((100% - 30px) / 4) !important; aspect-ratio: 1 / 1; flex-shrink: 0 !important; }
     .glass-dropdown-toggle { padding: 10px 15px !important; font-size: 0.95rem !important; }
-    .product-media-gallery { height: 480px !important; overflow: hidden !important; position: relative !important; }
-    .main-image-container { height: 350px !important; }
-    .main-product-media { max-height: 100%; }
-    .thumbnails-container { gap: 10px; margin-top: 10px; height: 120px !important; overflow-x: auto !important; }
-    .thumbnail { width: calc((100% - 30px) / 4) !important; height: 100px !important; flex-shrink: 0 !important; }
     
-    /* Adaptations mobiles pour les variantes */
     .variant-selectors,
     .product-form__input--swatch,
     .variant-input-wrap {
@@ -259,22 +270,20 @@
       max-height: 200px;
     }
     
-    .product-form__input input[type="radio"] + label {
-      padding: 8px 12px;
-      font-size: 13px;
-      margin: 4px;
-    }
-    
     .color-swatch,
     .variant-input,
     .color-circle {
-      width: 40px !important;
-      height: 40px !important;
-      min-width: 40px;
+      width: 36px !important;
+      height: 36px !important;
+      min-width: 36px;
     }
-    
   }
-</style>
+
+  /* DESKTOP - Grands écrans (769px et plus) */
+  @media screen and (min-width: 769px) {
+    .snowpeak-product-page { padding: 120px 40px 20px 40px !important; }
+    .main-image-container { max-height: 700px; }
+  }</style>
 
 <div class="snowpeak-product-page">
   <div class="page-width product-grid">
