@@ -141,6 +141,35 @@
     ]
   },
   {
+    "name": "t:labels.typography_colors",
+    "settings": [
+      {
+        "type": "color",
+        "id": "color_heading_text",
+        "label": "t:labels.heading_text",
+        "default": "#18181B"
+      },
+      {
+        "type": "color",
+        "id": "color_body_text",
+        "label": "t:labels.body_text",
+        "default": "#52525B"
+      },
+      {
+        "type": "color",
+        "id": "color_text_secondary",
+        "label": "t:labels.secondary_text",
+        "default": "#71717A"
+      },
+      {
+        "type": "color",
+        "id": "color_text_muted",
+        "label": "t:labels.muted_text",
+        "default": "#A1A1AA"
+      }
+    ]
+  },
+  {
     "name": "t:labels.ui_elements_colors",
     "settings": [
       {
@@ -178,6 +207,12 @@
         "id": "color_badge_text",
         "label": "t:labels.badge_text",
         "default": "#ffffff"
+      },
+      {
+        "type": "color",
+        "id": "color_badge_bg_light",
+        "label": "t:labels.badge_background_light",
+        "default": "#F4F4F5"
       }
     ]
   },

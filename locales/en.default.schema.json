@@ -112,7 +112,13 @@
     "text": "Text",
     "title": "Title",
     "typography": "Typography",
+    "typography_colors": "Typography colors",
+    "heading_text": "Heading text color",
+    "body_text": "Body text color",
+    "secondary_text": "Secondary text color",
+    "muted_text": "Muted text color",
     "ui_elements_colors": "UI elements colors",
+    "badge_background_light": "Badge background (light)",
     "variant": "Variant",
     "view_all_button": "View all button text"
   },
